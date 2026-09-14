@@ -1,0 +1,23 @@
+# Ethereal Spaces website. On the server:
+#   cp .env.example .env      # then edit HOST_PORT, NEXT_PUBLIC_SITE_URL and the email settings
+#   docker compose up -d --build
+# See DEPLOY.md for the full steps.
+
+services:
+  web:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-}
+    image: ethereal-spaces-web
+    container_name: ethereal-spaces-web
+    restart: unless-stopped
+    ports:
+      # Reachable at http://SERVER-IP:HOST_PORT (3005 by default; pick a port nothing else uses)
+      - "${HOST_PORT:-3005}:3000"
+    environment:
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      CONTACT_RECIPIENT_EMAILS: ${CONTACT_RECIPIENT_EMAILS:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-}

@@ -1,0 +1,15 @@
+# Keep the Docker build context small and free of secrets
+node_modules
+.next
+.git
+.github
+.leads
+.env
+.env.*
+!.env.example
+npm-debug.log*
+Dockerfile
+docker-compose.yml
+.dockerignore
+README.md
+.vscode

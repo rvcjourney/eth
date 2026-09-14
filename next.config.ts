@@ -1,16 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        port: '',
-        pathname: '/**',
-      },
-    ],
-  },
+  // Produces a small self-contained server in .next/standalone, used by the Docker image.
+  output: "standalone",
   devIndicators: false,
 
   // Ensure we can build without issues

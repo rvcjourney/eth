@@ -33,5 +33,7 @@ export const BRAND = {
   phoneHref: `tel:+${WHATSAPP_NUMBER}`,
   whatsappHref: whatsappLink(GREETING),
   email: 'spaces.ethereal@gmail.com',
-  siteUrl: 'https://etherealspaces-three.vercel.app',
+  // Public address used for SEO links, sitemap and social previews. Set NEXT_PUBLIC_SITE_URL at build time
+  // (e.g. http://YOUR-SERVER-IP:3005 now, your domain later).
+  siteUrl: (process.env.NEXT_PUBLIC_SITE_URL || 'https://etherealspaces-three.vercel.app').replace(/\/+$/, ''),
 } as const;
