@@ -2,227 +2,146 @@ import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 import fs from 'fs';
 import path from 'path';
+import { BRAND } from '@/lib/brand';
+
+// Enquiries from the contact form and callback popup are emailed to the studio; there is no database.
+// Configure in Vercel → Project → Settings → Environment Variables (see .env.example):
+//   SMTP_USER, SMTP_PASS        Gmail address and its 16-character App Password
+//   CONTACT_RECIPIENT_EMAILS    optional, comma-separated; defaults to the studio email
+
+export const runtime = 'nodejs';
+
+const FIELD_LABELS: Record<string, string> = {
+  name: 'Name',
+  phone: 'Phone / WhatsApp',
+  email: 'Email',
+  project_type: 'Project Type',
+  budget_range: 'Budget',
+  location: 'City / Area',
+  message: 'Details',
+  source: 'Submitted From',
+};
+
+const MAX_FIELD_LENGTH = 3000;
+
+const escapeHtml = (text: string) =>
+  text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+const WHATSAPP_FALLBACK_ERROR = 'We could not send your enquiry just now. Please send it on WhatsApp or call us instead.';
 
 export async function POST(req: NextRequest) {
+  let body: unknown;
   try {
-    const body = await req.json();
-    
-    if (!body || typeof body !== 'object') {
-      return NextResponse.json({ error: 'Invalid submission data' }, { status: 400 });
-    }
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: 'Invalid submission.' }, { status: 400 });
+  }
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return NextResponse.json({ error: 'Invalid submission.' }, { status: 400 });
+  }
 
-    // 1. Resolve Recipient Email List
-    const recipientEmailsEnv = process.env.CONTACT_RECIPIENT_EMAILS || process.env.ADMIN_EMAIL || 'admin@etherealspaces.com';
-    // Split by comma and filter empty emails
-    const recipients = recipientEmailsEnv
-      .split(',')
-      .map(email => email.trim())
-      .filter(email => email.length > 0);
+  const raw = body as Record<string, unknown>;
 
-    if (recipients.length === 0) {
-      recipients.push('admin@etherealspaces.com');
-    }
+  // Spam trap: the "website" field is hidden from people, so only bots fill it in. Pretend success.
+  if (typeof raw.website === 'string' && raw.website.trim()) {
+    return NextResponse.json({ success: true });
+  }
 
-    // 2. Build HTML and Plain Text email representations
-    const dateStr = new Date().toLocaleString('en-US', { timeZone: 'UTC' });
-    const formattedFields = Object.entries(body)
-      .map(([key, val]) => {
-        const formattedKey = key
-          .replace(/_/g, ' ')
-          .replace(/\b\w/g, c => c.toUpperCase());
-        return { label: formattedKey, value: String(val) };
-      });
+  const data: Record<string, string> = {};
+  for (const key of Object.keys(FIELD_LABELS)) {
+    const value = raw[key];
+    if (typeof value === 'string' && value.trim()) data[key] = value.trim().slice(0, MAX_FIELD_LENGTH);
+  }
 
-    const emailSubject = `[New Lead] Spatial Design Inquiry — ${body.name || 'Anonymous'}`;
+  if (!data.name || (!data.phone && !data.email)) {
+    return NextResponse.json({ error: 'Please share your name and a phone number or email.' }, { status: 400 });
+  }
 
-    // Plain text body representation
-    const plainTextBody = `
-Ethereal Spaces — New Spatial Design Inquiry
-Submitted on: ${dateStr} UTC
+  const submittedAt = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' });
+  const subject = `New website enquiry: ${data.name}${data.project_type ? ` · ${data.project_type}` : ''}`;
+  const rows = Object.entries(data).map(([key, value]) => ({ label: FIELD_LABELS[key], value }));
 
-Details:
-${formattedFields.map(f => `${f.label}: ${f.value}`).join('\n')}
+  // One-click reply links for the studio. Indian mobile numbers are often typed without the country code.
+  const visitorDigits = (data.phone ?? '').replace(/\D/g, '');
+  const visitorWhatsApp = visitorDigits.length === 10 ? `91${visitorDigits}` : visitorDigits;
+  const replyWhatsApp = visitorWhatsApp.length >= 10
+    ? `https://wa.me/${visitorWhatsApp}?text=${encodeURIComponent(`Hello ${data.name}, thank you for contacting Ethereal Spaces.`)}`
+    : '';
 
-This lead has been compiled and forwarded automatically.
-`;
+  const text = [
+    `New enquiry from the Ethereal Spaces website (${submittedAt} IST)`,
+    '',
+    ...rows.map((row) => `${row.label}: ${row.value}`),
+    '',
+    replyWhatsApp ? `Reply on WhatsApp: ${replyWhatsApp}` : '',
+  ].join('\n');
 
-    // HTML body representation (editorial layout)
-    const htmlBody = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #F6F4EE;
-      color: #1C1B1A;
-      margin: 0;
-      padding: 40px 20px;
-    }
-    .email-container {
-      background-color: #FFFFFF;
-      border: 1px solid rgba(28, 27, 26, 0.08);
-      border-radius: 16px;
-      max-width: 580px;
-      margin: 0 auto;
-      padding: 40px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.02);
-    }
-    .header-logo {
-      font-family: Georgia, serif;
-      font-size: 20px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #C5A265;
-      border-bottom: 1px solid rgba(28, 27, 26, 0.06);
-      padding-bottom: 24px;
-      margin-bottom: 32px;
-      text-align: center;
-    }
-    .title {
-      font-family: Georgia, serif;
-      font-size: 24px;
-      font-weight: 300;
-      margin-top: 0;
-      margin-bottom: 8px;
-      color: #1C1B1A;
-    }
-    .subtitle {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      color: rgba(28, 27, 26, 0.45);
-      margin-bottom: 32px;
-    }
-    .field-row {
-      margin-bottom: 24px;
-    }
-    .field-label {
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      color: #C5A265;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-    .field-value {
-      font-size: 13px;
-      line-height: 1.6;
-      color: #2D2C2A;
-    }
-    .footer {
-      text-align: center;
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 0.15em;
-      color: rgba(28, 27, 26, 0.35);
-      border-top: 1px solid rgba(28, 27, 26, 0.06);
-      padding-top: 24px;
-      margin-top: 40px;
-    }
-  </style>
-</head>
-<body>
-  <div class="email-container">
-    <div class="header-logo">Ethereal Spaces</div>
-    
-    <h2 class="title">Design Inquiry</h2>
-    <div class="subtitle">Submitted on ${dateStr} UTC</div>
-    
-    <div style="margin-bottom: 32px;">
-      ${formattedFields.map(f => `
-        <div class="field-row">
-          <div class="field-label">${f.label}</div>
-          <div class="field-value">${f.value.replace(/\n/g, '<br />')}</div>
-        </div>
-      `).join('')}
-    </div>
-    
-    <div class="footer">
-      Turnkey Luxury Curation / Geneva • London • New York • Vienna
+  const button = (href: string, label: string) =>
+    `<a href="${escapeHtml(href)}" style="display:inline-block;margin:0 8px 8px 0;padding:10px 18px;border-radius:999px;background:#1F1A17;color:#F5F2ED;text-decoration:none;font-size:13px;">${label}</a>`;
+
+  const html = `<!DOCTYPE html>
+<html><body style="margin:0;padding:32px 16px;background:#F5F2ED;font-family:Arial,Helvetica,sans-serif;color:#1F1A17;">
+  <div style="max-width:560px;margin:0 auto;background:#FFFFFF;border:1px solid #DDD4C9;border-radius:16px;padding:32px;">
+    <p style="margin:0 0 4px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#6B5646;">Ethereal Spaces · Website Enquiry</p>
+    <h1 style="margin:0 0 4px;font-family:Georgia,serif;font-weight:normal;font-size:26px;">${escapeHtml(data.name)}</h1>
+    <p style="margin:0 0 24px;font-size:13px;color:#5C4E43;">${escapeHtml(submittedAt)} IST</p>
+    ${rows.map((row) => `
+    <div style="margin-bottom:16px;">
+      <div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#6B5646;margin-bottom:4px;">${escapeHtml(row.label)}</div>
+      <div style="font-size:15px;line-height:1.5;">${escapeHtml(row.value).replace(/\n/g, '<br />')}</div>
+    </div>`).join('')}
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid #ECE6DE;">
+      ${replyWhatsApp ? button(replyWhatsApp, 'Reply on WhatsApp') : ''}
+      ${data.phone ? button(`tel:${data.phone.replace(/[^+\d]/g, '')}`, 'Call') : ''}
+      ${data.email ? button(`mailto:${data.email}`, 'Reply by Email') : ''}
     </div>
   </div>
-</body>
-</html>
-`;
+</body></html>`;
 
-    // 3. Resolve Mail Transporter Settings
-    const smtpHost = process.env.SMTP_HOST || '';
-    const smtpPort = parseInt(process.env.SMTP_PORT || '587', 10);
-    const smtpUser = process.env.SMTP_USER || '';
-    const smtpPass = process.env.SMTP_PASS || '';
-    const smtpFrom = process.env.SMTP_FROM || 'concierge@etherealspaces.com';
+  const smtpUser = process.env.SMTP_USER?.trim() ?? '';
+  // Gmail displays App Passwords in groups of four; spaces are not part of the password.
+  const smtpPass = process.env.SMTP_PASS?.replace(/\s+/g, '') ?? '';
+  const recipients = (process.env.CONTACT_RECIPIENT_EMAILS || BRAND.email)
+    .split(',')
+    .map((email) => email.trim())
+    .filter(Boolean);
 
-    // 4. Send or Simulate Email
-    if (smtpHost.trim().length > 0) {
-      // SMTP Configured - Attempt real transmission
-      const transporter = nodemailer.createTransport({
-        host: smtpHost,
-        port: smtpPort,
-        secure: smtpPort === 465, // true for 465, false for other ports
-        auth: {
-          user: smtpUser,
-          pass: smtpPass
-        }
-      });
-
-      await transporter.sendMail({
-        from: smtpFrom,
-        to: recipients.join(', '),
-        subject: emailSubject,
-        text: plainTextBody,
-        html: htmlBody
-      });
-
-      console.log(`[Email Success] Real email sent to: ${recipients.join(', ')}`);
-      return NextResponse.json({ success: true, mode: 'real', recipients });
-    } else {
-      // SMTP Not Configured - Run in simulator mode
-      const separator = '='.repeat(60);
-      const simulatorOutput = `
-${separator}
-[SMTP EMAIL SIMULATOR] — Leads Forwarding
-SMTP Credentials not configured in .env. Logging email transmission details:
-
-From: ${smtpFrom}
-To: ${recipients.join(', ')}
-Subject: ${emailSubject}
-
---- PLAIN TEXT BODY ---
-${plainTextBody}
-${separator}
-`;
-      console.log(simulatorOutput);
-
-      // Save a local copy in the workspace directory under public/scratch/email_leads
-      try {
-        const scratchDir = path.join(process.cwd(), 'public', 'scratch', 'email_leads');
-        if (!fs.existsSync(scratchDir)) {
-          fs.mkdirSync(scratchDir, { recursive: true });
-        }
-        const fileName = `lead-${Date.now()}.json`;
-        const filePath = path.join(scratchDir, fileName);
-        
-        fs.writeFileSync(filePath, JSON.stringify({
-          timestamp: new Date().toISOString(),
-          subject: emailSubject,
-          from: smtpFrom,
-          to: recipients,
-          data: body,
-          plainText: plainTextBody
-        }, null, 2));
-
-        console.log(`[Email Simulator Backup] Saved lead backup to: public/scratch/email_leads/${fileName}`);
-      } catch (writeErr) {
-        console.error('Failed to write local backup email log:', writeErr);
-      }
-
-      return NextResponse.json({ success: true, mode: 'simulated', recipients });
+  if (!smtpUser || !smtpPass) {
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[contact] Email is not configured (SMTP_USER / SMTP_PASS missing). Enquiry was not delivered.');
+      return NextResponse.json({ error: WHATSAPP_FALLBACK_ERROR, whatsappFallback: true }, { status: 503 });
     }
 
-  } catch (err: any) {
-    console.error('Error handling lead submission API:', err);
-    return NextResponse.json({ error: err.message || 'Server error processing contact lead' }, { status: 500 });
+    // Local development without email settings: keep a copy on disk instead (the folder is git-ignored).
+    const dir = path.join(process.cwd(), '.leads');
+    fs.mkdirSync(dir, { recursive: true });
+    const file = path.join(dir, `lead-${Date.now()}.json`);
+    fs.writeFileSync(file, JSON.stringify({ subject, recipients, data, submittedAt }, null, 2));
+    console.log(`[contact] Email not configured; saved enquiry to ${file}`);
+    return NextResponse.json({ success: true, mode: 'local' });
+  }
+
+  try {
+    const port = Number(process.env.SMTP_PORT || 465);
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      port,
+      secure: port === 465,
+      auth: { user: smtpUser, pass: smtpPass },
+    });
+
+    await transporter.sendMail({
+      from: process.env.SMTP_FROM || `"Ethereal Spaces Website" <${smtpUser}>`,
+      to: recipients,
+      replyTo: data.email || undefined,
+      subject,
+      text,
+      html,
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error('[contact] Failed to send enquiry email:', err);
+    return NextResponse.json({ error: WHATSAPP_FALLBACK_ERROR, whatsappFallback: true }, { status: 502 });
   }
 }

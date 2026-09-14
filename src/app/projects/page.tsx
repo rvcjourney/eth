@@ -1,29 +1,19 @@
-'use strict';
 'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ArrowUpRight, SlidersHorizontal } from 'lucide-react';
-import { db, Project } from '@/lib/db';
-
-const categories = ['All', 'Residential', 'Commercial', 'Luxury Villas', 'Apartments', 'Renovations'];
+import { Search, ArrowUpRight } from 'lucide-react';
+import { PROJECTS } from '@/lib/content';
 
 export default function ProjectsPage() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
+  const projects = PROJECTS;
+  const [filteredProjects, setFilteredProjects] = useState(PROJECTS);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    async function loadData() {
-      const allProjects = await db.getProjects();
-      setProjects(allProjects);
-      setFilteredProjects(allProjects);
-    }
-    loadData();
-  }, []);
+  const categories = ['All', ...Array.from(new Set(projects.map((p) => p.category)))];
 
   // Handle live filtering by category and search query
   useEffect(() => {
@@ -37,6 +27,7 @@ export default function ProjectsPage() {
       const query = searchQuery.toLowerCase();
       result = result.filter(p => 
         p.name.toLowerCase().includes(query) ||
+        p.category.toLowerCase().includes(query) ||
         p.location.toLowerCase().includes(query) ||
         p.overview.toLowerCase().includes(query) ||
         p.materials.some(m => m.toLowerCase().includes(query))
@@ -52,10 +43,10 @@ export default function ProjectsPage() {
         
         {/* Header Title */}
         <div className="space-y-4 mb-16 text-center md:text-left">
-          <span className="text-[10px] tracking-[0.3em] uppercase text-gold block">Our Portfolios</span>
-          <h1 className="text-4xl md:text-6xl font-light tracking-tight">Curated Creations</h1>
-          <p className="text-xs text-ivory/60 max-w-sm tracking-wide leading-relaxed font-light">
-            Explore our collection of boutique physical canvases, each crafted to evoke peace, clarity, and structural beauty.
+          <span className="text-xs tracking-[0.3em] uppercase text-gold block">Portfolio</span>
+          <h1 className="text-5xl md:text-7xl font-light tracking-tight">Our Projects</h1>
+          <p className="text-base text-ivory/80 max-w-xl leading-relaxed font-light">
+            Completed homes photographed after handover, alongside 3D visualisations of living rooms, bedrooms, washrooms and hospitality spaces. Each one crafted to enhance the way people live.
           </p>
         </div>
 
@@ -68,10 +59,10 @@ export default function ProjectsPage() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 text-[10px] uppercase tracking-wider transition-all duration-300 rounded-full border ${
+                className={`px-4 py-2 text-xs uppercase tracking-wider transition-all duration-300 rounded-full border ${
                   selectedCategory === cat
                     ? 'border-gold bg-gold text-dark-bg font-medium'
-                    : 'border-gold/10 text-ivory/70 hover:border-gold/30 hover:text-gold'
+                    : 'border-gold/10 text-ivory/80 hover:border-gold/30 hover:text-gold'
                 }`}
               >
                 {cat}
@@ -84,10 +75,11 @@ export default function ProjectsPage() {
             <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/50" />
             <input
               type="text"
-              placeholder="Search by name, stone, location..."
+              placeholder="Search by room, style or material..."
+              aria-label="Search projects"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-dark-surface border border-gold/10 focus:border-gold focus:outline-none pl-12 pr-6 py-2.5 rounded-full text-xs text-ivory placeholder-ivory/40 tracking-wider transition-all"
+              className="w-full bg-dark-surface border border-gold/10 focus:border-gold focus:outline-none pl-12 pr-6 py-2.5 rounded-full text-xs text-ivory placeholder-ivory/50 tracking-wider transition-all"
             />
           </div>
 
@@ -96,7 +88,7 @@ export default function ProjectsPage() {
         {/* Masonry Layout Portfolio */}
         {filteredProjects.length === 0 ? (
           <div className="py-24 text-center border border-gold/5 rounded-sm bg-dark-surface/30">
-            <p className="text-xs uppercase tracking-widest text-ivory/50">No matching projects found.</p>
+            <p className="text-xs uppercase tracking-widest text-ivory/80">No matching projects found.</p>
           </div>
         ) : (
           <motion.div 
@@ -125,6 +117,7 @@ export default function ProjectsPage() {
                         src={project.hero_image}
                         alt={project.name}
                         fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-105"
                       />
                       
@@ -135,14 +128,14 @@ export default function ProjectsPage() {
                         <span className="text-[12px] uppercase tracking-[0.25em] text-white/80 mb-1 font-semibold">
                           {project.category}
                         </span>
-                        <h3 className="text-lg md:text-xl font-light text-white tracking-wide mb-1">
+                        <h3 className="text-3xl font-light text-white tracking-wide mb-1">
                           {project.name}
                         </h3>
-                        <span className="text-[10px] text-white/50 tracking-wider font-light mb-4">
+                        <span className="text-xs text-white/70 tracking-wider font-light mb-4">
                           {project.location}
                         </span>
 
-                        <div className="flex items-center space-x-2 text-[10px] text-white/90 uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <div className="flex items-center space-x-2 text-xs text-white/90 uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                           <span>View Detail</span>
                           <ArrowUpRight size={12} />
                         </div>

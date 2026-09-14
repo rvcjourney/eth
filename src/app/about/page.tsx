@@ -1,156 +1,162 @@
-'use strict';
 'use client';
 
-import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { db, TeamMember } from '@/lib/db';
+import { ArrowRight } from 'lucide-react';
+
+const VALUES = [
+  'Modern aesthetic, functional spaces',
+  'Design that enhances everyday living',
+  'Natural materials, used elegantly',
+  'Warm tones with refined contrasts'
+];
+
+// Palettes reproduced from the Ethereal Spaces portfolio.
+const PALETTES = [
+  { name: 'Warm Neutrals', colors: ['#DAD7D0', '#BAAB9E', '#A6825F', '#7F6150'] },
+  { name: 'Sage & Charcoal', colors: ['#CDD2CC', '#9BB9AC', '#435A3D', '#434343'] },
+  { name: 'Stone & Walnut', colors: ['#B9B4B1', '#857264', '#574B42'] }
+];
+
+const MATERIALS = [
+  { src: '/images/portfolio/materials/01.jpg', label: 'Textured Plaster' },
+  { src: '/images/portfolio/materials/02.jpg', label: 'Soft Ivory' },
+  { src: '/images/portfolio/materials/03.jpg', label: 'Brushed Metal' },
+  { src: '/images/portfolio/materials/04.jpg', label: 'Natural Wood' },
+  { src: '/images/portfolio/materials/05.jpg', label: 'Stone' }
+];
+
+const DELIVERABLES = [
+  { title: '2D Drawings', image: '/images/portfolio/drawings/floor-plan.jpg', href: '/services' },
+  { title: '3D Renders', image: '/images/portfolio/refined-comfort/01.jpg', href: '/projects' },
+  { title: 'Site Work', image: '/images/portfolio/site-work/09.jpg', href: '/services' },
+  { title: 'Completed Projects', image: '/images/portfolio/marble-and-walnut-home/01.jpg', href: '/projects' }
+];
 
 export default function AboutPage() {
-  const [team, setTeam] = useState<TeamMember[]>([]);
-
-  useEffect(() => {
-    async function loadData() {
-      const allTeam = await db.getTeamMembers();
-      setTeam(allTeam);
-    }
-    loadData();
-  }, []);
-
   return (
     <div className="relative pt-32 overflow-hidden bg-dark-bg">
-      
-      {/* 1. EDITORIAL STORY SECTION */}
+
+      {/* 1. STORY */}
       <section className="max-w-7xl mx-auto px-6 md:px-12 py-16 grid grid-cols-1 md:grid-cols-12 gap-16 items-center">
         <div className="md:col-span-7 space-y-8">
           <div className="space-y-4">
-            <span className="text-[10px] tracking-[0.3em] uppercase text-gold">Our Story</span>
-            <h1 className="text-4xl md:text-6xl font-light tracking-tight text-ivory leading-[1.15]">
-              Transcend Mere <span className="text-gold italic font-serif">Aesthetics</span>
+            <span className="text-xs tracking-[0.3em] uppercase text-gold">About Us</span>
+            <h1 className="text-5xl md:text-7xl font-light tracking-tight text-ivory leading-[1.02]">
+              Architecture as an <span className="text-gold italic">Emotional</span> Conduit
             </h1>
           </div>
-          <p className="text-xs md:text-sm font-light text-ivory/80 leading-relaxed max-w-xl">
-            We are passionate creators of extraordinary environments, dedicated to transforming spaces into timeless expressions of beauty, functionality, and personal style. 
+          <p className="text-base font-light text-ivory/80 leading-relaxed max-w-xl">
+            We are passionate creators of extraordinary environments, dedicated to transforming spaces into timeless expressions of beauty, functionality, and personal style.
             Founded in Geneva, Ethereal Spaces emerged from a single, guiding belief: that architecture is not merely physical structure, but an emotional conduit.
           </p>
-          <p className="text-xs md:text-sm font-light text-ivory/60 leading-relaxed max-w-xl">
+          <p className="text-base font-light text-ivory/80 leading-relaxed max-w-xl">
             We listen, we understand, and we translate dreams into tangible realities that exceed expectations. Through meticulous attention to detail, innovative solutions, and an unwavering commitment to excellence, we create spaces that are not just beautiful, but truly meaningful.
           </p>
         </div>
 
-        {/* Hero Studio Curation Image */}
-        <div className="md:col-span-5 relative aspect-[3/4] border border-gold/10 p-2 rounded-sm bg-dark-surface">
-          <div className="relative w-full h-full overflow-hidden">
-            <Image
-              src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=800"
-              alt="Ethereal Spaces Design Office"
-              fill
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-dark-bg via-transparent to-transparent opacity-40" />
-          </div>
+        <div className="md:col-span-5 relative aspect-[3/4] rounded-t-[999px] rounded-b-2xl overflow-hidden bg-dark-surface">
+          <Image src="/images/portfolio/hero/about.jpg" alt="Arched interior with a cane lounge chair" fill sizes="(max-width: 768px) 100vw, 40vw" className="object-cover" priority />
         </div>
       </section>
 
-      {/* 2. FOUNDER MESSAGE SECTION */}
-      <section className="py-24 border-t border-b border-gold/5 bg-dark-surface/40">
-        <div className="max-w-6xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
-          <div className="md:col-span-4 relative aspect-square max-w-[280px] mx-auto md:mx-0 overflow-hidden rounded-full border border-gold/20 p-1 bg-dark-bg">
-            <div className="relative w-full h-full rounded-full overflow-hidden">
-              <Image
-                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400"
-                alt="Aria Thorne Founder"
-                fill
-                className="object-cover"
-              />
-            </div>
-          </div>
-          
-          <div className="md:col-span-8 space-y-6 text-center md:text-left">
-            <span className="text-[12px] tracking-[0.25em] uppercase text-gold block">Founder Note</span>
-            <p className="text-sm md:text-lg font-serif italic text-champagne/90 leading-relaxed font-light">
-              "Great design does not yell; it hums. It sits quietly in the background, shaping the light, elevating the atmosphere, and making everyday rituals feel sacred."
-            </p>
-            <div className="space-y-1">
-              <h4 className="text-xs uppercase tracking-[0.2em] text-ivory font-medium">Aria Thorne</h4>
-              <p className="text-[10px] text-ivory/40">Creative Director & Founder, Ethereal Spaces</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. VISION & PHILOSOPHY */}
-      <section className="py-32 px-6 md:px-12 max-w-7xl mx-auto text-center space-y-16">
-        <div className="max-w-3xl mx-auto space-y-6">
-          <span className="text-[10px] tracking-[0.3em] uppercase text-gold block">Philosophy</span>
-          <h2 className="text-3xl md:text-5xl font-light tracking-tight text-ivory leading-tight">
-            Connecting People to Their <span className="text-gold italic font-serif">Environment</span>
-          </h2>
-          <p className="text-xs md:text-sm font-light text-ivory/70 leading-relaxed max-w-xl mx-auto">
-            Our approach is rooted in the understanding that every client is unique, with their own story to tell. We craft physical narratives that honor context, material honesty, and spatial harmony.
-          </p>
-        </div>
-
-        {/* Vision Pillars */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-          {[
-            { title: 'Architectural Elegance', desc: 'Prioritizing structural clarity, balanced lines, and continuous visual planes that align with site geography.' },
-            { title: 'Material Honesty', desc: 'Utilizing raw veneers, genuine stone slabs, and sand-cast metals that age beautifully over decades.' },
-            { title: 'Emotional Connection', desc: 'Crafting spatial atmospheres that immediately convey restfulness, privacy, and curated exclusivity.' }
-          ].map((pillar, idx) => (
-            <div key={idx} className="p-8 border border-gold/10 hover:border-gold/25 rounded-sm bg-dark-surface/50 transition-all duration-300">
-              <span className="text-xs font-serif text-gold block mb-6">0{idx + 1}</span>
-              <h3 className="text-base font-light text-ivory tracking-wide mb-3">{pillar.title}</h3>
-              <p className="text-[11px] text-ivory/60 leading-relaxed font-light">{pillar.desc}</p>
-            </div>
+      {/* 2. VALUES */}
+      <section className="py-24 border-t border-b border-gold/10 bg-dark-surface">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {VALUES.map((value, idx) => (
+            <motion.div
+              key={value}
+              initial={{ y: 20 }}
+              whileInView={{ y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: idx * 0.1 }}
+              className="space-y-4"
+            >
+              <span className="text-4xl font-serif text-gold/40 block">0{idx + 1}</span>
+              <p className="text-2xl font-serif text-ivory leading-snug">{value}</p>
+            </motion.div>
           ))}
         </div>
       </section>
 
-      {/* 4. TEAM SECTION */}
-      <section className="py-32 bg-dark-surface border-t border-gold/5">
-        <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <div className="space-y-4 mb-20 text-center">
-            <span className="text-[10px] tracking-[0.3em] uppercase text-gold">The Collective</span>
-            <h2 className="text-3xl md:text-5xl font-light tracking-tight text-ivory">Our Creative Minds</h2>
+      {/* 3. TAILORED COLOUR PALETTES */}
+      <section className="py-32 px-6 md:px-12 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+        <div className="lg:col-span-5 space-y-8">
+          <div className="space-y-4">
+            <span className="text-xs tracking-[0.3em] uppercase text-gold block">Tailored Colour Palettes</span>
+            <h2 className="text-4xl md:text-5xl font-light tracking-tight text-ivory leading-tight">A Palette That Reflects You</h2>
           </div>
-
-          {/* Team Members Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {team.map((member, idx) => (
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: idx * 0.15 }}
-                key={member.id}
-                className="group relative overflow-hidden aspect-[3/4] rounded-sm border border-gold/5 bg-dark-bg"
-              >
-                {/* Photo with subtle hover scale */}
-                <Image
-                  src={member.image_url}
-                  alt={member.name}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-
-                {/* Glassmorphic Info Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent opacity-60 group-hover:opacity-90 transition-all duration-500" />
-                
-                {/* Text reveal content */}
-                <div className="absolute inset-x-0 bottom-0 p-8 transform translate-y-6 group-hover:translate-y-0 transition-transform duration-500 flex flex-col justify-end min-h-[50%]">
-                  <span className="text-[12px] uppercase tracking-[0.15em] text-white/70 mb-1 font-medium">{member.designation}</span>
-                  <h3 className="text-lg font-light text-white tracking-wider mb-3">{member.name}</h3>
-                  <p className="text-[11px] text-white/60 leading-relaxed font-light opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100">
-                    {member.description}
-                  </p>
+          <p className="text-base font-light text-ivory/80 leading-relaxed">
+            We carefully select the perfect colour palette for each client, ensuring harmony with their lifestyle, personality, and space. Every detail is customised to create a unique atmosphere that reflects individuality.
+          </p>
+          <div className="space-y-5">
+            {PALETTES.map((palette) => (
+              <div key={palette.name} className="flex items-center gap-5">
+                <div className="flex">
+                  {palette.colors.map((color, i) => (
+                    <span
+                      key={color}
+                      className="w-10 h-10 rounded-full border-2 border-dark-bg"
+                      style={{ backgroundColor: color, marginLeft: i === 0 ? 0 : -10 }}
+                      title={color}
+                    />
+                  ))}
                 </div>
-              </motion.div>
+                <span className="text-xs uppercase tracking-[0.2em] text-champagne">{palette.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="lg:col-span-7 grid grid-cols-5 gap-3">
+          {MATERIALS.map((material, idx) => (
+            <motion.figure
+              key={material.src}
+              initial={{ y: 30 }}
+              whileInView={{ y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: idx * 0.08 }}
+              className="space-y-3"
+            >
+              <div className="relative aspect-[1/3] rounded-full overflow-hidden bg-dark-surface">
+                <Image src={material.src} alt={material.label} fill sizes="15vw" className="object-cover" />
+              </div>
+              <figcaption className="text-xs uppercase tracking-[0.15em] text-champagne text-center">{material.label}</figcaption>
+            </motion.figure>
+          ))}
+        </div>
+      </section>
+
+      {/* 4. WHAT WE DELIVER */}
+      <section className="py-32 bg-dark-surface border-t border-gold/10">
+        <div className="max-w-7xl mx-auto px-6 md:px-12">
+          <div className="space-y-4 mb-16 text-center">
+            <span className="text-xs tracking-[0.3em] uppercase text-gold">What We Deliver</span>
+            <h2 className="text-4xl md:text-5xl font-light tracking-tight text-ivory">From First Line to Final Finish</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {DELIVERABLES.map((item) => (
+              <Link key={item.title} href={item.href} className="group relative aspect-[3/4] rounded-2xl overflow-hidden bg-dark-bg block">
+                <Image src={item.image} alt={item.title} fill sizes="(max-width: 1024px) 50vw, 25vw" className="object-cover transition-transform duration-[1.2s] group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-6 flex items-center justify-between text-white">
+                  <h3 className="text-2xl font-light">{item.title}</h3>
+                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                </div>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
+      {/* 5. CTA */}
+      <section className="py-28 px-6 text-center border-t border-gold/10 space-y-6">
+        <h2 className="text-4xl md:text-5xl font-light text-ivory">Let&apos;s Reimagine Your Space</h2>
+        <Link href="/contact" className="inline-block px-10 py-4 bg-ivory hover:bg-gold text-dark-bg text-xs uppercase tracking-[0.25em] rounded-full transition-colors duration-300">
+          Book a Consultation
+        </Link>
+      </section>
     </div>
   );
 }

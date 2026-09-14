@@ -8,19 +8,18 @@ interface SafeImageProps extends Omit<ImageProps, 'src'> {
   fallbackSrc?: string;
 }
 
-export default function SafeImage({ 
-  src, 
-  fallbackSrc = '/images/premium_hero_interior.png', 
-  alt, 
-  ...props 
+export default function SafeImage({
+  src,
+  fallbackSrc = '/images/portfolio/hero/home.jpg',
+  alt,
+  ...props
 }: SafeImageProps) {
-  const [imgSrc, setImgSrc] = useState<string>('/images/premium_hero_interior.png');
+  // Start with the real src so server-rendered HTML shows the intended image (no fallback flash).
+  const [imgSrc, setImgSrc] = useState<string>(src || fallbackSrc);
 
   useEffect(() => {
-    if (src) {
-      setImgSrc(src);
-    }
-  }, [src]);
+    setImgSrc(src || fallbackSrc);
+  }, [src, fallbackSrc]);
 
   return (
     <Image
@@ -28,7 +27,7 @@ export default function SafeImage({
       src={imgSrc}
       alt={alt || 'Ethereal Spaces'}
       onError={() => {
-        setImgSrc(fallbackSrc);
+        if (imgSrc !== fallbackSrc) setImgSrc(fallbackSrc);
       }}
     />
   );

@@ -2,45 +2,31 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Maximize2, X, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
-import { db, GalleryItem } from '@/lib/db';
+import { X, ChevronLeft, ChevronRight, Eye, ArrowUpRight } from 'lucide-react';
+import { GALLERY_ITEMS } from '@/lib/content';
 
 interface InteractiveGalleryProps {
   tag?: string;
   title?: string;
   description?: string;
+  limit?: number;
 }
 
-export default function InteractiveGallery({ tag, title, description }: InteractiveGalleryProps) {
-  const [items, setItems] = useState<GalleryItem[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function InteractiveGallery({ tag, title, description, limit }: InteractiveGalleryProps) {
+  const items = GALLERY_ITEMS;
   const [activeFilter, setActiveFilter] = useState('All');
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-
-  useEffect(() => {
-    async function fetchGallery() {
-      try {
-        const data = await db.getGalleryItems();
-        if (data && data.length > 0) {
-          setItems(data);
-        }
-      } catch (error) {
-        console.error('Error fetching gallery items:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchGallery();
-  }, []);
 
   // Extract unique categories
   const categories = ['All', ...Array.from(new Set(items.map((item) => item.category)))];
 
   // Filter items
-  const filteredItems = activeFilter === 'All' 
-    ? items 
+  const matchingItems = activeFilter === 'All'
+    ? items
     : items.filter((item) => item.category === activeFilter);
+  const filteredItems = limit ? matchingItems.slice(0, limit) : matchingItems;
 
   const handlePrev = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -79,13 +65,13 @@ export default function InteractiveGallery({ tag, title, description }: Interact
         {/* Editorial Heading */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
           <div className="space-y-4">
-            <span className="text-[10px] tracking-[0.4em] uppercase text-gold font-semibold block animate-pulse">
-              {tag || 'Atmospheric Board'}
+            <span className="text-xs tracking-[0.3em] uppercase text-gold block">
+              {tag || 'Studio Archive'}
             </span>
             <h2 className="text-3xl md:text-5xl font-light tracking-tight text-ivory">
               {title || 'Curated Details'}
             </h2>
-            <p className="text-xs md:text-sm font-light text-champagne max-w-md leading-relaxed">
+            <p className="text-sm md:text-base text-ivory/80 max-w-md leading-relaxed">
               {description || 'Explore the raw materials, textures, and bespoke joinery details that form the foundation of our spatial signature.'}
             </p>
           </div>
@@ -96,10 +82,10 @@ export default function InteractiveGallery({ tag, title, description }: Interact
               <button
                 key={category}
                 onClick={() => setActiveFilter(category)}
-                className={`relative px-4 py-2 text-[10px] md:text-xs uppercase tracking-widest transition-all duration-500 rounded-lg font-medium cursor-pointer ${
+                className={`relative px-4 py-2 text-xs md:text-xs uppercase tracking-widest transition-all duration-500 rounded-lg font-medium cursor-pointer ${
                   activeFilter === category 
                     ? 'text-dark-bg font-semibold' 
-                    : 'text-ivory/60 hover:text-ivory'
+                    : 'text-ivory/75 hover:text-ivory'
                 }`}
               >
                 {activeFilter === category && (
@@ -115,16 +101,8 @@ export default function InteractiveGallery({ tag, title, description }: Interact
           </div>
         </div>
 
-        {/* Loading State */}
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="aspect-[3/4] bg-dark-surface animate-pulse rounded-2xl border border-gold/5" />
-            ))}
-          </div>
-        ) : (
-          /* Interactive Masonry-like Grid */
-          <motion.div 
+        {/* Interactive masonry-like grid */}
+          <motion.div
             layout 
             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8"
           >
@@ -164,10 +142,10 @@ export default function InteractiveGallery({ tag, title, description }: Interact
                         </div>
                         
                         <div className="space-y-2 text-white">
-                          <span className="text-[9px] uppercase tracking-[0.25em] text-white/70 font-semibold bg-white/10 backdrop-blur-md px-2 py-0.5 rounded-full w-fit">
+                          <span className="text-xs uppercase tracking-[0.25em] text-white/70 font-semibold bg-white/10 backdrop-blur-md px-2 py-0.5 rounded-full w-fit">
                             {item.category}
                           </span>
-                          <p className="text-[11px] font-light leading-relaxed tracking-wide text-white/90 line-clamp-2">
+                          <p className="text-xs font-light leading-relaxed tracking-wide text-white/90 line-clamp-2">
                             {item.caption || 'Curated spacing detail.'}
                           </p>
                         </div>
@@ -178,10 +156,21 @@ export default function InteractiveGallery({ tag, title, description }: Interact
               })}
             </AnimatePresence>
           </motion.div>
-        )}
 
         {/* Prevent grid height shift due to architectural offsets */}
         <div className="h-12 hidden md:block" />
+
+        {limit && items.length > limit && (
+          <div className="text-center mt-4">
+            <Link
+              href="/gallery"
+              className="inline-flex items-center gap-2 px-8 py-3.5 border border-ivory/25 hover:border-ivory text-ivory text-xs uppercase tracking-[0.2em] rounded-full transition-colors"
+            >
+              <span>View Full Gallery</span>
+              <ArrowUpRight size={14} />
+            </Link>
+          </div>
+        )}
 
       </div>
 
@@ -230,37 +219,30 @@ export default function InteractiveGallery({ tag, title, description }: Interact
               onClick={(e) => e.stopPropagation()} // Prevent closing when clicking card
             >
               {/* Image Column */}
-              <div className="col-span-1 md:col-span-8 relative aspect-[4/3] md:aspect-square w-full overflow-hidden bg-black/10">
+              <div className="col-span-1 md:col-span-8 relative aspect-[4/3] md:aspect-square w-full overflow-hidden bg-[#ECE6DE]">
                 <Image
                   src={filteredItems[lightboxIndex].image_url}
                   alt={filteredItems[lightboxIndex].caption || 'Curated Detail'}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   sizes="(max-w-1024px) 100vw, 66vw"
                   priority
                 />
               </div>
 
               {/* Detail Brief Column */}
-              <div className="col-span-1 md:col-span-4 p-8 md:p-10 flex flex-col justify-between h-full bg-[#FAF9F5] text-[#1C1B1A]">
+              <div className="col-span-1 md:col-span-4 p-8 md:p-10 flex flex-col justify-between h-full bg-[#F5F2ED] text-[#1F1A17]">
                 <div className="space-y-6">
-                  <div>
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-[#C5A265] block font-semibold mb-2">
-                      {filteredItems[lightboxIndex].category}
-                    </span>
-                    <h3 className="text-xl md:text-2xl font-light font-serif tracking-tight leading-tight">
-                      Curated Element
-                    </h3>
-                  </div>
-                  
-                  <hr className="border-[#1C1B1A]/10 w-16" />
-                  
-                  <p className="text-xs md:text-sm font-light leading-relaxed text-[#1C1B1A]/70">
-                    {filteredItems[lightboxIndex].caption || 'No detail details configured for this canvas.'}
+                  <span className="text-xs uppercase tracking-[0.3em] text-[#6B5646] block">
+                    {filteredItems[lightboxIndex].category}
+                  </span>
+                  <hr className="border-[#1F1A17]/10 w-16" />
+                  <p className="text-2xl font-serif leading-snug text-[#1F1A17]/85">
+                    {filteredItems[lightboxIndex].caption}
                   </p>
                 </div>
 
-                <div className="pt-8 border-t border-[#1C1B1A]/10 flex justify-between items-center text-[10px] text-[#1C1B1A]/40 uppercase tracking-widest">
+                <div className="pt-8 border-t border-[#1C1B1A]/10 flex justify-between items-center text-xs text-[#1C1B1A]/40 uppercase tracking-widest">
                   <span>ITEM {lightboxIndex + 1} OF {filteredItems.length}</span>
                   <span>ETHEREAL SPACES</span>
                 </div>

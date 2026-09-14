@@ -1,38 +1,62 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Cormorant_Garamond, Jost } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import CustomCursor from "@/components/CustomCursor";
 import AutoContactPopup from "@/components/AutoContactPopup";
+import FloatingContact from "@/components/FloatingContact";
+import { BRAND } from "@/lib/brand";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+// Only 400+ weights are loaded, so `font-light` headings render at a readable 400.
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const jost = Jost({
+  variable: "--font-jost",
   subsets: ["latin"],
   display: "swap",
 });
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
+const description =
+  "Ethereal Spaces designs timeless interiors with tailored colour palettes, precise 2D drawings, ultra-realistic 3D renders and on-site execution for homes, washrooms and hospitality spaces.";
 
 export const metadata: Metadata = {
   title: {
     template: "%s | Ethereal Spaces",
-    default: "Ethereal Spaces | Luxury Interior Design Studio",
+    default: "Ethereal Spaces | Interior Design Studio — Elegance Redefined",
   },
-  description: "Ethereal Spaces is a premium interior design studio specializing in creating timeless, sophisticated, and emotionally engaging spaces.",
-  keywords: ["Interior Designer", "Luxury Interior Design", "Residential Interior Design", "Commercial Interior Design", "Home Interior Design", "Modern Interior Design", "Interior Design Studio"],
-  metadataBase: new URL("https://etherealspaces.com"),
+  description,
+  keywords: ["Interior Designer", "Luxury Interior Design", "Residential Interior Design", "3D Interior Renders", "2D Interior Drawings", "Turnkey Interiors", "Restaurant Interior Design"],
+  metadataBase: new URL(BRAND.siteUrl),
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "Ethereal Spaces | Luxury Interior Design Studio",
-    description: "Premium interior design studio creating timeless, sophisticated, and emotionally engaging spaces.",
+    title: "Ethereal Spaces | Elegance Redefined, Spaces Reimagined",
+    description,
     type: "website",
-    locale: "en_US",
+    locale: "en_IN",
     siteName: "Ethereal Spaces",
+    images: [{ url: "/images/portfolio/opulence-and-elegance/01.jpg", width: 1350, height: 760, alt: "Living and dining interior by Ethereal Spaces" }],
   },
+  twitter: { card: "summary_large_image" },
+};
+
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: BRAND.legalName,
+  alternateName: BRAND.name,
+  slogan: BRAND.tagline,
+  description,
+  url: BRAND.siteUrl,
+  telephone: BRAND.phoneHref.replace("tel:", ""),
+  email: BRAND.email,
+  logo: `${BRAND.siteUrl}/images/logo-dark.png`,
+  image: `${BRAND.siteUrl}/images/portfolio/hero/home.jpg`,
 };
 
 export default function RootLayout({
@@ -41,15 +65,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
-      <body className="antialiased bg-dark-bg text-ivory min-h-screen flex flex-col font-sans select-none">
-        <CustomCursor />
-        <AutoContactPopup />
+    <html lang="en" className={`${cormorant.variable} ${jost.variable}`}>
+      <body className="antialiased bg-dark-bg text-ivory min-h-screen flex flex-col font-sans">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
         <Header />
         <main className="flex-grow">
           {children}
         </main>
         <Footer />
+        <FloatingContact />
+        <AutoContactPopup />
       </body>
     </html>
   );

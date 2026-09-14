@@ -1,33 +1,23 @@
-'use strict';
 'use client';
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
-import { db, GalleryItem } from '@/lib/db';
-
-const categories = ['All', 'Residential', 'Commercial', 'Luxury Villas', 'Apartments', 'Renovations'];
+import { GALLERY_ITEMS } from '@/lib/content';
 
 export default function GalleryPage() {
-  const [items, setItems] = useState<GalleryItem[]>([]);
-  const [filtered, setFiltered] = useState<GalleryItem[]>([]);
+  const items = GALLERY_ITEMS;
+  const [filtered, setFiltered] = useState(GALLERY_ITEMS);
   const [selectedCategory, setSelectedCategory] = useState('All');
-  
+
+  const categories = ['All', ...Array.from(new Set(items.map((item) => item.category)))];
+
   // Lightbox States
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  
-  // Pagination
-  const [visibleCount, setVisibleCount] = useState(6);
 
-  useEffect(() => {
-    async function loadData() {
-      const gallery = await db.getGalleryItems();
-      setItems(gallery);
-      setFiltered(gallery);
-    }
-    loadData();
-  }, []);
+  // Pagination
+  const [visibleCount, setVisibleCount] = useState(12);
 
   // Filter items by category
   useEffect(() => {
@@ -36,11 +26,11 @@ export default function GalleryPage() {
     } else {
       setFiltered(items.filter(item => item.category.toLowerCase() === selectedCategory.toLowerCase()));
     }
-    setVisibleCount(6); // Reset pagination on category change
+    setVisibleCount(12); // Reset pagination on category change
   }, [selectedCategory, items]);
 
   const loadMore = () => {
-    setVisibleCount(prev => prev + 6);
+    setVisibleCount(prev => prev + 12);
   };
 
   const openLightbox = (index: number) => {
@@ -83,10 +73,10 @@ export default function GalleryPage() {
         
         {/* Title */}
         <div className="space-y-4 mb-16 text-center">
-          <span className="text-[10px] tracking-[0.3em] uppercase text-gold block">Visual Inspiration</span>
-          <h1 className="text-4xl md:text-6xl font-light tracking-tight">The Gallery</h1>
-          <p className="text-xs text-ivory/60 max-w-md mx-auto tracking-wide leading-relaxed font-light">
-            A raw, unedited archive of architectural details, joinery connections, stone selection, and completed spatial moments.
+          <span className="text-xs tracking-[0.3em] uppercase text-gold block">Studio Archive</span>
+          <h1 className="text-5xl md:text-7xl font-light tracking-tight">The Gallery</h1>
+          <p className="text-base text-ivory/80 max-w-xl mx-auto leading-relaxed font-light">
+            Completed details, 3D renders, technical 2D drawings and moments from site: the craft behind every Ethereal Spaces interior.
           </p>
         </div>
 
@@ -96,10 +86,10 @@ export default function GalleryPage() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 text-[10px] uppercase tracking-wider transition-all duration-300 rounded-full border ${
+              className={`px-4 py-2 text-xs uppercase tracking-wider transition-all duration-300 rounded-full border ${
                 selectedCategory === cat
                   ? 'border-gold bg-gold text-dark-bg font-medium'
-                  : 'border-gold/10 text-ivory/70 hover:border-gold/30 hover:text-gold'
+                  : 'border-gold/10 text-ivory/80 hover:border-gold/30 hover:text-gold'
               }`}
             >
               {cat}
@@ -137,7 +127,7 @@ export default function GalleryPage() {
                   </div>
                   <div className="space-y-1">
                     <span className="text-[12px] uppercase tracking-widest text-white/80 font-semibold">{item.category}</span>
-                    <p className="text-[10px] text-white/90 line-clamp-2 font-light">{item.caption}</p>
+                    <p className="text-xs text-white/90 line-clamp-2 font-light">{item.caption}</p>
                   </div>
                 </div>
 
@@ -169,7 +159,7 @@ export default function GalleryPage() {
               className="fixed inset-0 z-50 bg-black/98 flex flex-col justify-between items-center p-6 select-none"
             >
               {/* Top Bar */}
-              <div className="w-full max-w-7xl flex justify-between items-center text-ivory/60 pt-4">
+              <div className="w-full max-w-7xl flex justify-between items-center text-ivory/75 pt-4">
                 <span className="text-[12px] uppercase tracking-[0.25em] font-light pl-4">
                   {filtered[lightboxIndex].category}
                 </span>
@@ -222,11 +212,11 @@ export default function GalleryPage() {
               {/* Bottom Caption Bar */}
               <div className="w-full max-w-3xl text-center pb-6 space-y-2">
                 {filtered[lightboxIndex].caption && (
-                  <p className="text-xs text-champagne/80 font-light leading-relaxed max-w-xl mx-auto">
+                  <p className="text-sm md:text-base text-ivory/80 leading-relaxed max-w-xl mx-auto">
                     {filtered[lightboxIndex].caption}
                   </p>
                 )}
-                <span className="text-[12px] text-ivory/40 uppercase tracking-widest block">
+                <span className="text-[12px] text-ivory/75 uppercase tracking-widest block">
                   Image {lightboxIndex + 1} of {filtered.length}
                 </span>
               </div>

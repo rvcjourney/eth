@@ -1,294 +1,261 @@
-'use strict';
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Mail, Phone, MapPin, Clock, Send, CheckCircle } from 'lucide-react';
-import confetti from 'canvas-confetti';
-import { db, FormField, StudioSettings } from '@/lib/db';
+import { useState } from 'react';
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle, MessageCircle } from 'lucide-react';
+import { CONTACT_FORM_FIELDS, STUDIO_SETTINGS, FormField } from '@/lib/content';
+import { BRAND, whatsappLink, enquiryWhatsAppMessage } from '@/lib/brand';
+
+const FIELDS = CONTACT_FORM_FIELDS.filter((f) => f.is_active).sort((a, b) => a.sort_order - b.sort_order);
+
+const initialValues = (formFields: FormField[]) =>
+  Object.fromEntries(
+    formFields.map((f) => [f.id, f.field_type === 'select' && f.options.length > 0 ? f.options[0] : ''])
+  ) as Record<string, string>;
 
 export default function ContactPage() {
-  const [fields, setFields] = useState<FormField[]>([]);
-  const [formData, setFormData] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(true);
+  const [formData, setFormData] = useState<Record<string, string>>(() => initialValues(FIELDS));
+  const [honeypot, setHoneypot] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [sentData, setSentData] = useState<Record<string, string> | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
-  const [settings, setSettings] = useState<StudioSettings | null>(null);
+  const [showWhatsAppFallback, setShowWhatsAppFallback] = useState(false);
 
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const [activeFields, studioSettings] = await Promise.all([
-          db.getContactFormFields(),
-          db.getStudioSettings()
-        ]);
-        setFields(activeFields);
-        setSettings(studioSettings);
-        
-        // Pre-populate state
-        const initialData: Record<string, string> = {};
-        activeFields.forEach(f => {
-          initialData[f.id] = f.field_type === 'select' && f.options.length > 0 ? f.options[0] : '';
-        });
-        setFormData(initialData);
-      } catch (err) {
-        console.error('Failed to load initial data:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadData();
-  }, []);
+  const settings = STUDIO_SETTINGS;
+  const phone = settings.phone || BRAND.phoneDisplay;
+  const email = settings.email || BRAND.email;
+  const hasHours = Boolean(settings.hours_weekday || settings.hours_weekend);
 
   const handleChange = (id: string, value: string) => {
-    setFormData(prev => ({ ...prev, [id]: value }));
+    setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     setErrorMsg('');
+    setShowWhatsAppFallback(false);
+
+    const missing = FIELDS.find((field) => field.is_required && !formData[field.id]?.trim());
+    if (missing) {
+      setErrorMsg(`Please fill out the required field: ${missing.label}`);
+      setSubmitting(false);
+      return;
+    }
 
     try {
-      // Validate required fields
-      for (const field of fields) {
-        if (field.is_required && !formData[field.id]?.trim()) {
-          throw new Error(`Please fill out the required field: ${field.label}`);
-        }
-      }
-
-      // 1. Submit inquiry to local database
-      await db.createInquiry(formData);
-
-      // 2. Submit to API route for Email Lead Forwarding
-      const apiResponse = await fetch('/api/contact', {
+      const response = await fetch('/api/contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, source: 'Contact page', website: honeypot })
       });
+      const result = await response.json().catch(() => ({}));
 
-      if (!apiResponse.ok) {
-        const errData = await apiResponse.json();
-        throw new Error(errData.error || 'Failed to forward lead via email');
+      if (!response.ok) {
+        setErrorMsg(result.error || 'We could not send your enquiry just now. Please send it on WhatsApp or call us instead.');
+        setShowWhatsAppFallback(true);
+        return;
       }
 
-      // Trigger Confetti Celebration (Luxury Experience!)
-      confetti({
-        particleCount: 80,
-        spread: 60,
-        origin: { y: 0.6 },
-        colors: ['#C9A86A', '#D8C4A3', '#F5F1E8', '#121212']
-      });
-
-      setSubmitted(true);
-    } catch (err: any) {
-      setErrorMsg(err.message || 'An error occurred. Please try again.');
+      setSentData(formData);
+      setFormData(initialValues(FIELDS));
+    } catch {
+      setErrorMsg('We could not reach our server. Please send your enquiry on WhatsApp or call us instead.');
+      setShowWhatsAppFallback(true);
     } finally {
       setSubmitting(false);
     }
   };
 
+  const inputClass = 'w-full bg-dark-bg border border-gold/15 focus:border-gold focus:outline-none px-4 py-3 text-sm text-ivory placeholder-ivory/50 rounded-xl transition-colors';
+
   return (
     <div className="min-h-screen pt-32 pb-24 bg-dark-bg text-ivory">
       <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 lg:grid-cols-12 gap-16">
-        
-        {/* Contact Info & Blueprint Map */}
+
         <div className="lg:col-span-5 space-y-12">
-          
           <div className="space-y-4">
-            <span className="text-[10px] tracking-[0.3em] uppercase text-gold block font-semibold">Get In Touch</span>
-            <h1 className="text-4xl md:text-5xl font-light tracking-tight">Begin Your Journey</h1>
-            <p className="text-xs text-ivory/60 leading-relaxed font-light">
-              We look forward to hearing your architectural vision and spatial goals. Complete the form to start a dialogue.
+            <span className="text-xs tracking-[0.3em] uppercase text-gold block">Contact Us</span>
+            <h1 className="text-5xl md:text-6xl font-light tracking-tight leading-[1.02]">Let&apos;s Reimagine Your Space</h1>
+            <p className="text-base text-ivory/80 leading-relaxed font-light">
+              Tell us about your home, restaurant or workspace. Share as much or as little as you like, and we will get back to you to arrange a consultation.
             </p>
           </div>
 
-          {/* Details list */}
-          <ul className="space-y-6 text-xs text-ivory/70 font-light">
-            <li className="flex items-start space-x-4">
-              <div className="w-8 h-8 rounded-full border border-gold/15 flex items-center justify-center text-gold shrink-0 bg-dark-surface">
-                <MapPin size={14} />
-              </div>
-              <div className="space-y-1 pt-1">
-                <p className="text-ivory font-medium">Headquarters</p>
-                <p>{settings?.address || "15 Avenue de la Paix, Geneva, Switzerland"}</p>
-              </div>
-            </li>
-            <li className="flex items-start space-x-4">
-              <div className="w-8 h-8 rounded-full border border-gold/15 flex items-center justify-center text-gold shrink-0 bg-dark-surface">
+          <div className="p-8 bg-ivory text-dark-bg rounded-2xl space-y-5">
+            <h2 className="text-3xl font-light">Prefer to talk?</h2>
+            <p className="text-sm text-dark-bg/80 font-light">Call or message us directly.</p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <a href={BRAND.whatsappHref} target="_blank" rel="noopener noreferrer" className="flex-1 px-5 py-3 bg-dark-bg text-ivory hover:bg-dark-secondary text-xs uppercase tracking-[0.2em] rounded-full flex items-center justify-center gap-2 transition-colors">
+                <MessageCircle size={14} />
+                WhatsApp
+              </a>
+              <a href={`tel:${phone.replace(/[^+\d]/g, '')}`} className="flex-1 px-5 py-3 border border-dark-bg/30 hover:border-dark-bg text-xs uppercase tracking-[0.2em] rounded-full flex items-center justify-center gap-2 transition-colors">
                 <Phone size={14} />
-              </div>
-              <div className="space-y-1 pt-1">
-                <p className="text-ivory font-medium">Phone Number</p>
-                <p>{settings?.phone || "+41 22 730 4000"}</p>
-              </div>
-            </li>
-            <li className="flex items-start space-x-4">
-              <div className="w-8 h-8 rounded-full border border-gold/15 flex items-center justify-center text-gold shrink-0 bg-dark-surface">
-                <Mail size={14} />
-              </div>
-              <div className="space-y-1 pt-1">
-                <p className="text-ivory font-medium">Email Address</p>
-                <a href={`mailto:${settings?.email || "concierge@etherealspaces.com"}`} className="hover:text-gold transition-colors duration-300">
-                  {settings?.email || "concierge@etherealspaces.com"}
-                </a>
-              </div>
-            </li>
-            <li className="flex items-start space-x-4">
-              <div className="w-8 h-8 rounded-full border border-gold/15 flex items-center justify-center text-gold shrink-0 bg-dark-surface">
-                <Clock size={14} />
-              </div>
-              <div className="space-y-1 pt-1">
-                <p className="text-ivory font-medium">Business Hours</p>
-                <p>{settings?.hours_weekday || "Mon - Fri"}: {settings?.hours_weekday_time || "09:00 AM - 06:00 PM"}</p>
-                <p className="text-ivory/40">{settings?.hours_weekend || "Sat"}: {settings?.hours_weekend_time || "10:00 AM - 04:00 PM (By Appointment)"}</p>
-              </div>
-            </li>
-          </ul>
-
-          {/* Blueprint Map Component (Light Architectural Placeholder) */}
-          <div className="border border-gold/10 rounded-sm bg-dark-surface/40 aspect-video w-full p-6 relative overflow-hidden flex items-center justify-center group">
-            {/* Grid pattern background mimicking blueprint paper */}
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,_transparent_1px),_linear-gradient(90deg,_rgba(0,0,0,0.02)_1px,_transparent_1px)] bg-[size:20px_20px] opacity-75" />
-            <div className="absolute inset-0 bg-gradient-to-br from-dark-bg/10 via-transparent to-dark-bg/40" />
-
-            <div className="relative z-10 text-center space-y-3">
-              <div className="w-1.5 h-1.5 bg-gold rounded-full mx-auto animate-ping" />
-              <p className="text-[10px] uppercase tracking-[0.25em] text-gold font-medium">Map Coordinates</p>
-              <p className="text-[12px] font-mono text-ivory/40">46.2044° N, 6.1432° E — Geneva, CH</p>
+                Call
+              </a>
             </div>
-            
-            {/* Decorative blueprint border marks */}
-            <div className="absolute top-2 left-2 border-t border-l border-gold/20 w-3 h-3" />
-            <div className="absolute top-2 right-2 border-t border-r border-gold/20 w-3 h-3" />
-            <div className="absolute bottom-2 left-2 border-b border-l border-gold/20 w-3 h-3" />
-            <div className="absolute bottom-2 right-2 border-b border-r border-gold/20 w-3 h-3" />
           </div>
 
+          <ul className="space-y-6 text-sm text-ivory/80 font-light">
+            <li className="flex items-start gap-4">
+              <span className="w-9 h-9 rounded-full border border-gold/20 flex items-center justify-center text-gold shrink-0"><Phone size={14} /></span>
+              <div className="pt-1.5">
+                <p className="text-ivory font-medium">Phone / WhatsApp</p>
+                <a href={`tel:${phone.replace(/[^+\d]/g, '')}`} className="hover:text-gold transition-colors">{phone}</a>
+              </div>
+            </li>
+            <li className="flex items-start gap-4">
+              <span className="w-9 h-9 rounded-full border border-gold/20 flex items-center justify-center text-gold shrink-0"><Mail size={14} /></span>
+              <div className="pt-1.5">
+                <p className="text-ivory font-medium">Email</p>
+                <a href={`mailto:${email}`} className="hover:text-gold transition-colors break-all">{email}</a>
+              </div>
+            </li>
+            {settings.address && (
+              <li className="flex items-start gap-4">
+                <span className="w-9 h-9 rounded-full border border-gold/20 flex items-center justify-center text-gold shrink-0"><MapPin size={14} /></span>
+                <div className="pt-1.5">
+                  <p className="text-ivory font-medium">Studio</p>
+                  <p>{settings.address}</p>
+                </div>
+              </li>
+            )}
+            {hasHours && (
+              <li className="flex items-start gap-4">
+                <span className="w-9 h-9 rounded-full border border-gold/20 flex items-center justify-center text-gold shrink-0"><Clock size={14} /></span>
+                <div className="pt-1.5">
+                  <p className="text-ivory font-medium">Hours</p>
+                  {settings.hours_weekday && <p>{settings.hours_weekday}: {settings.hours_weekday_time}</p>}
+                  {settings.hours_weekend && <p className="text-ivory/80">{settings.hours_weekend}: {settings.hours_weekend_time}</p>}
+                </div>
+              </li>
+            )}
+          </ul>
         </div>
 
-        {/* Dynamic Inquiry Form Card */}
         <div className="lg:col-span-7">
-          <div className="glass-panel p-8 md:p-12 rounded-sm border border-gold/10 relative overflow-hidden">
-            
-            {submitted ? (
-              <div className="text-center py-12 space-y-6">
-                <div className="w-16 h-16 rounded-full border border-gold flex items-center justify-center text-gold mx-auto bg-dark-bg">
+          <div className="bg-dark-surface p-8 md:p-12 rounded-2xl border border-gold/10">
+            {sentData ? (
+              <div className="text-center py-12 space-y-6" role="status">
+                <div className="w-16 h-16 rounded-full border border-gold flex items-center justify-center text-gold mx-auto">
                   <CheckCircle size={32} strokeWidth={1} />
                 </div>
-                <div className="space-y-2">
-                  <h3 className="text-2xl font-light text-ivory">Thank You</h3>
-                  <p className="text-xs text-champagne uppercase tracking-widest font-medium">Inquiry Captured Successfully</p>
-                </div>
-                <p className="text-xs text-ivory/60 max-w-sm mx-auto leading-relaxed font-light">
-                  Our concierge will review your spatial data and contact you within 24 business hours to arrange an initial design consultation.
+                <h3 className="text-4xl font-light text-ivory">Thank You</h3>
+                <p className="text-sm text-ivory/80 max-w-sm mx-auto leading-relaxed font-light">
+                  Your enquiry has been emailed to our studio. We will be in touch shortly to arrange your consultation.
                 </p>
-                <button
-                  onClick={() => setSubmitted(false)}
-                  className="px-6 py-2.5 border border-gold/30 hover:border-gold text-gold hover:text-dark-bg hover:bg-gold text-[10px] uppercase tracking-widest font-semibold transition-all duration-300 rounded-sm"
-                >
-                  Send another inquiry
-                </button>
+                <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
+                  <a
+                    href={whatsappLink(enquiryWhatsAppMessage(sentData))}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-6 py-3 bg-ivory hover:bg-gold text-dark-bg text-xs uppercase tracking-[0.2em] rounded-full flex items-center justify-center gap-2 transition-colors"
+                  >
+                    <MessageCircle size={14} />
+                    Also send on WhatsApp
+                  </a>
+                  <button
+                    onClick={() => setSentData(null)}
+                    className="px-6 py-3 border border-gold/30 hover:border-gold text-gold text-xs uppercase tracking-[0.2em] transition-colors rounded-full"
+                  >
+                    Send another enquiry
+                  </button>
+                </div>
+                <p className="text-xs text-ivory/70">WhatsApp is optional, and usually gets the quickest reply.</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="border-b border-gold/10 pb-4 mb-4">
-                  <h3 className="text-xs uppercase tracking-[0.25em] text-gold font-medium">Project Questionnaire</h3>
-                  <p className="text-[10px] text-ivory/40">Please complete all fields to help us prepare your brief</p>
+              <form onSubmit={handleSubmit} className="space-y-6" noValidate={false}>
+                <div className="border-b border-gold/10 pb-4">
+                  <h2 className="text-3xl font-light">Project Enquiry</h2>
+                  <p className="text-sm text-ivory/80 mt-1">Fields marked * are required.</p>
                 </div>
 
-                {loading ? (
-                  // Loading skeletons
-                  <div className="space-y-6">
-                    {[1, 2, 3, 4].map(n => (
-                      <div key={n} className="space-y-2">
-                        <div className="h-3 w-24 bg-gold/10 rounded animate-pulse" />
-                        <div className="h-10 w-full bg-dark-surface/40 rounded animate-pulse" />
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <>
-                    {/* Render fields dynamically */}
-                    {fields.map((field) => (
-                      <div key={field.id} className="space-y-2 flex flex-col">
-                        <label 
-                          htmlFor={field.id} 
-                          className="text-[10px] uppercase tracking-[0.2em] text-ivory/80 flex items-center justify-between"
+                {/* Spam trap: hidden from people and screen readers; bots that fill it are ignored. */}
+                <div aria-hidden="true" className="absolute -left-[9999px] w-px h-px overflow-hidden">
+                  <label htmlFor="website">Website</label>
+                  <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {FIELDS.map((field) => (
+                    <div key={field.id} className={`space-y-2 flex flex-col ${field.field_type === 'textarea' ? 'md:col-span-2' : ''}`}>
+                      <label htmlFor={field.id} className="text-xs uppercase tracking-[0.2em] text-ivory/75">
+                        {field.label}{field.is_required && <span className="text-gold"> *</span>}
+                      </label>
+
+                      {field.field_type === 'textarea' ? (
+                        <textarea
+                          id={field.id}
+                          required={field.is_required}
+                          value={formData[field.id] || ''}
+                          onChange={(e) => handleChange(field.id, e.target.value)}
+                          rows={5}
+                          placeholder="Rooms, size, style you love, timeline…"
+                          className={`${inputClass} resize-none leading-relaxed`}
+                        />
+                      ) : field.field_type === 'select' ? (
+                        <select
+                          id={field.id}
+                          required={field.is_required}
+                          value={formData[field.id] || ''}
+                          onChange={(e) => handleChange(field.id, e.target.value)}
+                          className={inputClass}
                         >
-                          <span>{field.label}</span>
-                          {field.is_required && <span className="text-gold text-xs">*</span>}
-                        </label>
-
-                        {field.field_type === 'textarea' ? (
-                          <textarea
-                            id={field.id}
-                            required={field.is_required}
-                            value={formData[field.id] || ''}
-                            onChange={(e) => handleChange(field.id, e.target.value)}
-                            rows={5}
-                            placeholder={`Describe your vision for this ${field.id === 'message' ? 'project' : field.label.toLowerCase()}`}
-                            className="w-full bg-dark-bg/60 border border-gold/15 focus:border-gold focus:outline-none p-4 text-xs text-ivory placeholder-ivory/20 rounded-sm transition-all resize-none leading-relaxed"
-                          />
-                        ) : field.field_type === 'select' ? (
-                          <select
-                            id={field.id}
-                            required={field.is_required}
-                            value={formData[field.id] || ''}
-                            onChange={(e) => handleChange(field.id, e.target.value)}
-                            className="w-full bg-dark-bg/60 border border-gold/15 focus:border-gold focus:outline-none px-4 py-3 text-xs text-ivory rounded-sm transition-all"
-                          >
-                            {field.options.map((opt, i) => (
-                              <option key={i} value={opt} className="bg-dark-surface text-ivory py-2">
-                                {opt}
-                              </option>
-                            ))}
-                          </select>
-                        ) : (
-                          <input
-                            id={field.id}
-                            type={field.field_type}
-                            required={field.is_required}
-                            value={formData[field.id] || ''}
-                            onChange={(e) => handleChange(field.id, e.target.value)}
-                            placeholder={field.is_required ? '(Required)' : ''}
-                            className="w-full bg-dark-bg/60 border border-gold/15 focus:border-gold focus:outline-none px-4 py-3 text-xs text-ivory placeholder-ivory/20 rounded-sm transition-all"
-                          />
-                        )}
-                      </div>
-                    ))}
-
-                    {errorMsg && (
-                      <p className="text-[11px] text-red-400 font-light tracking-wide">{errorMsg}</p>
-                    )}
-
-                    {/* Submit Button */}
-                    <div className="pt-4">
-                      <button
-                        type="submit"
-                        disabled={submitting}
-                        className="w-full py-4 bg-gold hover:bg-champagne disabled:bg-gold/40 text-dark-bg disabled:text-dark-bg/60 font-semibold text-xs uppercase tracking-[0.25em] transition-all duration-500 rounded-sm flex items-center justify-center space-x-2"
-                      >
-                        {submitting ? (
-                          <>
-                            <span className="w-3.5 h-3.5 border border-dark-bg border-t-transparent rounded-full animate-spin" />
-                            <span>Submitting brief...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Send size={12} className="translate-y-px" />
-                            <span>Submit Project Inquiry</span>
-                          </>
-                        )}
-                      </button>
+                          {field.options.map((opt) => (
+                            <option key={opt} value={opt}>{opt}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input
+                          id={field.id}
+                          type={field.field_type}
+                          required={field.is_required}
+                          value={formData[field.id] || ''}
+                          onChange={(e) => handleChange(field.id, e.target.value)}
+                          autoComplete={field.field_type === 'email' ? 'email' : field.field_type === 'tel' ? 'tel' : field.id === 'name' ? 'name' : undefined}
+                          className={inputClass}
+                        />
+                      )}
                     </div>
-                  </>
+                  ))}
+                </div>
+
+                {errorMsg && (
+                  <div className="space-y-3" role="alert">
+                    <p className="text-sm text-red-700">{errorMsg}</p>
+                    {showWhatsAppFallback && (
+                      <a
+                        href={whatsappLink(enquiryWhatsAppMessage(formData))}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-ivory hover:bg-gold text-dark-bg text-xs uppercase tracking-[0.2em] rounded-full transition-colors"
+                      >
+                        <MessageCircle size={14} />
+                        Send this enquiry on WhatsApp
+                      </a>
+                    )}
+                  </div>
                 )}
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full py-4 bg-ivory hover:bg-gold disabled:opacity-50 text-dark-bg text-xs uppercase tracking-[0.25em] transition-colors duration-300 rounded-full flex items-center justify-center gap-2"
+                >
+                  {submitting ? (
+                    <>
+                      <span className="w-3.5 h-3.5 border border-dark-bg border-t-transparent rounded-full animate-spin" />
+                      <span>Sending…</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send size={12} />
+                      <span>Send Enquiry</span>
+                    </>
+                  )}
+                </button>
               </form>
             )}
-
           </div>
         </div>
 
