@@ -89,7 +89,7 @@ export default function HomePage() {
           >
             <div className="space-y-5">
               <motion.span variants={staggerItem} className="text-[12px] tracking-[0.4em] uppercase text-gold font-medium block">
-                {BRAND.legalName} · {BRAND.city}
+                {BRAND.legalName}
               </motion.span>
 
               <motion.h1 variants={wordContainer} className="text-5xl md:text-7xl xl:text-8xl font-light tracking-tight text-ivory leading-[1.02] flex flex-wrap">

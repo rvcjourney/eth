@@ -4,27 +4,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+import { COLOUR_PALETTES, MATERIAL_SWATCHES } from '@/lib/content';
 
 const VALUES = [
   'Modern aesthetic, functional spaces',
   'Design that enhances everyday living',
   'Natural materials, used elegantly',
   'Warm tones with refined contrasts'
-];
-
-// Palettes reproduced from the Ethereal Spaces portfolio.
-const PALETTES = [
-  { name: 'Warm Neutrals', colors: ['#DAD7D0', '#BAAB9E', '#A6825F', '#7F6150'] },
-  { name: 'Sage & Charcoal', colors: ['#CDD2CC', '#9BB9AC', '#435A3D', '#434343'] },
-  { name: 'Stone & Walnut', colors: ['#B9B4B1', '#857264', '#574B42'] }
-];
-
-const MATERIALS = [
-  { src: '/images/portfolio/materials/01.jpg', label: 'Textured Plaster' },
-  { src: '/images/portfolio/materials/02.jpg', label: 'Soft Ivory' },
-  { src: '/images/portfolio/materials/03.jpg', label: 'Brushed Metal' },
-  { src: '/images/portfolio/materials/04.jpg', label: 'Natural Wood' },
-  { src: '/images/portfolio/materials/05.jpg', label: 'Stone' }
 ];
 
 const DELIVERABLES = [
@@ -42,14 +28,14 @@ export default function AboutPage() {
       <section className="max-w-7xl mx-auto px-6 md:px-12 py-16 grid grid-cols-1 md:grid-cols-12 gap-16 items-center">
         <div className="md:col-span-7 space-y-8">
           <div className="space-y-4">
-            <span className="text-xs tracking-[0.3em] uppercase text-gold">About Us · Pune</span>
+            <span className="text-xs tracking-[0.3em] uppercase text-gold">About Us</span>
             <h1 className="text-5xl md:text-7xl font-light tracking-tight text-ivory leading-[1.02]">
               Architecture as an <span className="text-gold italic">Emotional</span> Conduit
             </h1>
           </div>
           <p className="text-base font-light text-ivory/80 leading-relaxed max-w-xl">
             We are passionate creators of extraordinary environments, dedicated to transforming spaces into timeless expressions of beauty, functionality, and personal style.
-            Based in Pune, Ethereal Spaces emerged from a single, guiding belief: that architecture is not merely physical structure, but an emotional conduit.
+            Ethereal Spaces emerged from a single, guiding belief: that architecture is not merely physical structure, but an emotional conduit.
           </p>
           <p className="text-base font-light text-ivory/80 leading-relaxed max-w-xl">
             We listen, we understand, and we translate dreams into tangible realities that exceed expectations. Through meticulous attention to detail, innovative solutions, and an unwavering commitment to excellence, we create spaces that are not just beautiful, but truly meaningful.
@@ -91,7 +77,7 @@ export default function AboutPage() {
             We carefully select the perfect colour palette for each client, ensuring harmony with their lifestyle, personality, and space. Every detail is customised to create a unique atmosphere that reflects individuality.
           </p>
           <div className="space-y-5">
-            {PALETTES.map((palette) => (
+            {COLOUR_PALETTES.map((palette) => (
               <div key={palette.name} className="flex items-center gap-5">
                 <div className="flex">
                   {palette.colors.map((color, i) => (
@@ -110,7 +96,7 @@ export default function AboutPage() {
         </div>
 
         <div className="lg:col-span-7 grid grid-cols-5 gap-3">
-          {MATERIALS.map((material, idx) => (
+          {MATERIAL_SWATCHES.map((material, idx) => (
             <motion.figure
               key={material.src}
               initial={{ y: 30 }}

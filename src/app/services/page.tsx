@@ -2,13 +2,22 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, MessageCircle } from 'lucide-react';
 import { BRAND } from '@/lib/brand';
+import MaterialBoard from '@/components/MaterialBoard';
 
-const services = [
+// Each service shows either the combined materials board or a single photo.
+type Service = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  details: string[];
+} & ({ visual: 'materials' } | { image: string; imageAlt: string });
+
+const services: Service[] = [
   {
     eyebrow: '01 — Colour & Material',
     title: 'Tailored Colour Palettes',
-    image: '/images/portfolio/materials/01.jpg',
-    imageAlt: 'Textured plaster material sample',
+    // Shows every material swatch and colour palette in one frame instead of a single photo.
+    visual: 'materials' as const,
     description: 'We carefully select the perfect colour palette for each client, ensuring harmony with their lifestyle, personality, and space. Every detail is customised to create a unique atmosphere that reflects individuality.',
     details: ['Palette matched to your lifestyle and personality', 'Finish selection: plaster, stone, wood and metal', 'Warm tones with refined contrasts']
   },
@@ -31,8 +40,8 @@ const services = [
   {
     eyebrow: '04 — Execution',
     title: 'On-Site Execution',
-    image: '/images/portfolio/site-work/09.jpg',
-    imageAlt: 'Balcony with slatted ceiling and spot lights during site work',
+    image: '/images/portfolio/site-work/08.jpg',
+    imageAlt: 'Layered false ceiling framing during site work by Ethereal Spaces',
     description: 'A design is only as good as its execution. We stay involved on site through false ceilings, carpentry, joinery and finishes, so that what gets built matches what was drawn, all the way to handover.',
     details: ['False ceilings and lighting', 'Custom carpentry and wardrobes', 'Finishes and detailing', 'Handover of the completed space']
   }
@@ -40,7 +49,9 @@ const services = [
 
 const spaces = [
   { group: 'Residential', items: ['Living & dining rooms', 'Bedrooms & wardrobes', 'Kitchens', 'Washrooms', 'Pooja units', 'Entrances & foyers'] },
-  { group: 'Hospitality & Commercial', items: ['Restaurants & cafés', 'Bars & lounges', 'Rooftop dining', 'Offices'] }
+  { group: 'Hospitality & Commercial', items: ['Restaurants & cafés', 'Bars & lounges', 'Rooftop dining', 'Offices', 'Hotels & resorts', 'Retail & showrooms'] },
+  { group: 'Architecture', items: ['Residential Architecture', 'Commercial Architecture', 'Space Planning', 'Renovation & Restoration', 'Facade Design', 'Structural & Architectural Planning'] },
+  { group: 'Landscape', items: ['Residential Gardens', 'Terrace Gardens', 'Rooftop Landscapes', 'Outdoor Spaces', 'Garden Design', 'Hardscape & Softscape Design'] }
 ];
 
 const siteWork = ['01', '03', '05', '07', '10', '11'];
@@ -61,8 +72,16 @@ export default function ServicesPage() {
         <div className="space-y-28">
           {services.map((srv, idx) => (
             <article key={srv.title} className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-              <div className={`lg:col-span-7 relative aspect-[3/2] rounded-2xl overflow-hidden bg-dark-surface ${idx % 2 === 1 ? 'lg:order-2' : ''}`}>
-                <Image src={srv.image} alt={srv.imageAlt} fill sizes="(max-width: 1024px) 100vw, 58vw" className="object-cover" />
+              <div
+                className={`lg:col-span-7 relative rounded-2xl overflow-hidden bg-dark-surface ${
+                  'visual' in srv ? 'aspect-[4/5] sm:aspect-[3/2]' : 'aspect-[3/2]'
+                } ${idx % 2 === 1 ? 'lg:order-2' : ''}`}
+              >
+                {'visual' in srv ? (
+                  <MaterialBoard />
+                ) : (
+                  <Image src={srv.image} alt={srv.imageAlt} fill sizes="(max-width: 1024px) 100vw, 58vw" className="object-cover" />
+                )}
               </div>
               <div className="lg:col-span-5 space-y-6">
                 <span className="text-xs uppercase tracking-[0.3em] text-gold">{srv.eyebrow}</span>

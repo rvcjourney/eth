@@ -345,3 +345,18 @@ export const STUDIO_SETTINGS: StudioSettings = {
   privacy_policy: '',
   terms_of_service: ''
 };
+
+// Colour palettes and material swatches reproduced from the portfolio's "Tailored Colour Palettes" page.
+export const COLOUR_PALETTES = [
+  { name: 'Warm Neutrals', colors: ['#DAD7D0', '#BAAB9E', '#A6825F', '#7F6150'] },
+  { name: 'Sage & Charcoal', colors: ['#CDD2CC', '#9BB9AC', '#435A3D', '#434343'] },
+  { name: 'Stone & Walnut', colors: ['#B9B4B1', '#857264', '#574B42'] }
+];
+
+export const MATERIAL_SWATCHES = [
+  { src: '/images/portfolio/materials/01.jpg', label: 'Textured Plaster' },
+  { src: '/images/portfolio/materials/02.jpg', label: 'Soft Ivory' },
+  { src: '/images/portfolio/materials/03.jpg', label: 'Brushed Metal' },
+  { src: '/images/portfolio/materials/04.jpg', label: 'Natural Wood' },
+  { src: '/images/portfolio/materials/05.jpg', label: 'Stone' }
+];

@@ -122,7 +122,7 @@ export default function AutoContactPopup() {
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           role="dialog"
           aria-label="Request a callback"
-          className="fixed bottom-36 right-4 left-4 md:left-auto md:bottom-44 md:right-8 z-50 max-w-sm p-6 bg-dark-surface rounded-2xl shadow-2xl border border-gold/15 text-ivory"
+          className="fixed bottom-52 right-4 left-4 md:left-auto md:bottom-60 md:right-8 z-50 max-w-sm p-6 bg-dark-surface rounded-2xl shadow-2xl border border-gold/15 text-ivory"
         >
           <button
             onClick={dismiss}

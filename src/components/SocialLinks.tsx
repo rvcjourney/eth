@@ -41,6 +41,24 @@ const NETWORKS: Record<Network, { label: string; icon: React.ReactNode }> = {
 
 const ORDER: Network[] = ['instagram', 'facebook', 'youtube', 'linkedin'];
 
+export function SocialIcon({ network, size = 18 }: { network: Network; size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {NETWORKS[network].icon}
+    </svg>
+  );
+}
+
 /** Social profile icons; networks without a link in BRAND.social are not shown. */
 export default function SocialLinks({ className = '' }: { className?: string }) {
   const networks = ORDER.filter((network) => BRAND.social[network]);
@@ -58,19 +76,7 @@ export default function SocialLinks({ className = '' }: { className?: string }) 
             title={NETWORKS[network].label}
             className="w-10 h-10 rounded-full border border-gold/25 text-ivory/80 hover:text-dark-bg hover:bg-ivory hover:border-ivory flex items-center justify-center transition-colors duration-300"
           >
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              {NETWORKS[network].icon}
-            </svg>
+            <SocialIcon network={network} />
           </a>
         </li>
       ))}
