@@ -334,7 +334,7 @@ export const CONTACT_FORM_FIELDS: FormField[] = [
 
 export const STUDIO_SETTINGS: StudioSettings = {
   id: 'default',
-  address: '',
+  address: 'Pune, Maharashtra, India',
   phone: '+91 84858 57626',
   email: 'spaces.ethereal@gmail.com',
   hours_weekday: '',

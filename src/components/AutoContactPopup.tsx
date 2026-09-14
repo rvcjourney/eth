@@ -5,8 +5,15 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, CheckCircle, MessageCircle } from 'lucide-react';
 import { whatsappLink, enquiryWhatsAppMessage } from '@/lib/brand';
+import {
+  canShowCallbackPopup,
+  markCallbackPopupShown,
+  snoozeCallbackPopup,
+  completeCallbackPopup,
+} from '@/lib/popupPrefs';
 
-const DISMISS_KEY = 'ethereal_contact_popup_dismissed';
+const OPEN_AFTER_MS = 45000;
+const OPEN_AT_SCROLL_DEPTH = 0.6;
 
 export default function AutoContactPopup() {
   const pathname = usePathname();
@@ -18,43 +25,54 @@ export default function AutoContactPopup() {
   const [errorMsg, setErrorMsg] = useState('');
   const [showWhatsAppFallback, setShowWhatsAppFallback] = useState(false);
 
-  const suppressed = pathname === '/contact';
+  const onContactPage = pathname === '/contact';
 
+  // Open at most once per visit: after 45 seconds on the site or at 60% scroll depth, whichever comes first.
+  // Once it has opened, the triggers are removed so it can never re-open by itself.
   useEffect(() => {
-    if (suppressed) return;
-    try {
-      if (localStorage.getItem(DISMISS_KEY) === 'true') return;
-    } catch {
-      return;
-    }
+    if (onContactPage || !canShowCallbackPopup()) return;
 
-    // Only invite engaged visitors: after 40 seconds, or once they have scrolled through 60% of a page.
-    const open = () => setIsOpen(true);
-    const timer = setTimeout(open, 40000);
-    const onScroll = () => {
-      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-      if (scrollable > 0 && window.scrollY / scrollable > 0.6) open();
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-
-    return () => {
+    let opened = false;
+    const stopListening = () => {
       clearTimeout(timer);
       window.removeEventListener('scroll', onScroll);
     };
-  }, [suppressed]);
+    const open = () => {
+      if (opened || !canShowCallbackPopup()) return;
+      opened = true;
+      stopListening();
+      markCallbackPopupShown();
+      setIsOpen(true);
+    };
+    const onScroll = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollable > 0 && window.scrollY / scrollable >= OPEN_AT_SCROLL_DEPTH) open();
+    };
 
-  const rememberDismissed = () => {
-    try {
-      localStorage.setItem(DISMISS_KEY, 'true');
-    } catch {
-      // Storage unavailable; the popup may show again next visit.
-    }
-  };
+    const timer = setTimeout(open, OPEN_AFTER_MS);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return stopListening;
+  }, [onContactPage]);
 
-  const handleClose = () => {
+  // Hide it if the visitor navigates to the contact page while it is open.
+  useEffect(() => {
+    if (onContactPage) setIsOpen(false);
+  }, [onContactPage]);
+
+  const dismiss = () => {
     setIsOpen(false);
-    rememberDismissed();
+    if (!submitted) snoozeCallbackPopup();
   };
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') dismiss();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, submitted]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +100,7 @@ export default function AutoContactPopup() {
       }
 
       setSubmitted(true);
-      rememberDismissed();
+      completeCallbackPopup();
     } catch {
       setErrorMsg('We could not reach our server. Please message us on WhatsApp instead.');
       setShowWhatsAppFallback(true);
@@ -96,7 +114,7 @@ export default function AutoContactPopup() {
 
   return (
     <AnimatePresence>
-      {isOpen && !suppressed && (
+      {isOpen && (
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -107,7 +125,7 @@ export default function AutoContactPopup() {
           className="fixed bottom-36 right-4 left-4 md:left-auto md:bottom-44 md:right-8 z-50 max-w-sm p-6 bg-dark-surface rounded-2xl shadow-2xl border border-gold/15 text-ivory"
         >
           <button
-            onClick={handleClose}
+            onClick={dismiss}
             className="absolute top-4 right-4 w-7 h-7 rounded-full border border-gold/15 flex items-center justify-center text-ivory/75 hover:text-ivory transition-colors"
             aria-label="Close"
           >
@@ -130,7 +148,7 @@ export default function AutoContactPopup() {
                 <MessageCircle size={13} />
                 Also send on WhatsApp
               </a>
-              <button onClick={() => setIsOpen(false)} className="text-xs uppercase tracking-widest text-ivory/75 hover:text-ivory transition-colors">
+              <button onClick={dismiss} className="text-xs uppercase tracking-widest text-ivory/75 hover:text-ivory transition-colors">
                 Close
               </button>
             </div>
@@ -164,7 +182,7 @@ export default function AutoContactPopup() {
                 <div className="space-y-2" role="alert">
                   <p className="text-xs text-red-700">{errorMsg}</p>
                   {showWhatsAppFallback && (
-                    <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-gold hover:text-ivory transition-colors">
+                    <a href={whatsappHref} target="_blank" rel="noopener noreferrer" onClick={completeCallbackPopup} className="inline-flex items-center gap-1.5 text-xs uppercase tracking-widest text-gold hover:text-ivory transition-colors">
                       <MessageCircle size={12} />
                       Send on WhatsApp
                     </a>
@@ -180,7 +198,7 @@ export default function AutoContactPopup() {
                 >
                   {submitting ? 'Sending…' : (<><Send size={11} /><span>Request Callback</span></>)}
                 </button>
-                <button type="button" onClick={handleClose} className="px-3 py-3 text-ivory/75 hover:text-ivory text-xs uppercase tracking-widest transition-colors">
+                <button type="button" onClick={dismiss} className="px-3 py-3 text-ivory/75 hover:text-ivory text-xs uppercase tracking-widest transition-colors">
                   Later
                 </button>
               </div>

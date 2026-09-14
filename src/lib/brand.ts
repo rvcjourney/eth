@@ -32,7 +32,16 @@ export const BRAND = {
   phoneDisplay: '+91 84858 57626',
   phoneHref: `tel:+${WHATSAPP_NUMBER}`,
   whatsappHref: whatsappLink(GREETING),
+  city: 'Pune',
+  region: 'Maharashtra',
   email: 'spaces.ethereal@gmail.com',
+  // Social profiles shown in the footer. Leave a link empty to hide that icon.
+  social: {
+    instagram: 'https://www.instagram.com/_etherealspaces/',
+    facebook: '',
+    youtube: '',
+    linkedin: '',
+  },
   // Public address used for SEO links, sitemap and social previews. Set NEXT_PUBLIC_SITE_URL at build time
   // (e.g. http://YOUR-SERVER-IP:3005 now, your domain later).
   siteUrl: (process.env.NEXT_PUBLIC_SITE_URL || 'https://etherealspaces-three.vercel.app').replace(/\/+$/, ''),

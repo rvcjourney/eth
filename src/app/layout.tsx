@@ -23,15 +23,15 @@ const jost = Jost({
 });
 
 const description =
-  "Ethereal Spaces designs timeless interiors with tailored colour palettes, precise 2D drawings, ultra-realistic 3D renders and on-site execution for homes, washrooms and hospitality spaces.";
+  "Ethereal Spaces is a Pune-based interior design studio creating timeless interiors with tailored colour palettes, precise 2D drawings, ultra-realistic 3D renders and on-site execution for homes, washrooms and hospitality spaces.";
 
 export const metadata: Metadata = {
   title: {
     template: "%s | Ethereal Spaces",
-    default: "Ethereal Spaces | Interior Design Studio — Elegance Redefined",
+    default: "Ethereal Spaces | Interior Design Studio in Pune — Elegance Redefined",
   },
   description,
-  keywords: ["Interior Designer", "Luxury Interior Design", "Residential Interior Design", "3D Interior Renders", "2D Interior Drawings", "Turnkey Interiors", "Restaurant Interior Design"],
+  keywords: ["Interior Designer in Pune", "Interior Design Studio Pune", "Luxury Interior Design Pune", "Residential Interior Design", "3D Interior Renders", "2D Interior Drawings", "Turnkey Interiors", "Restaurant Interior Design"],
   metadataBase: new URL(BRAND.siteUrl),
   alternates: { canonical: "/" },
   openGraph: {
@@ -57,6 +57,14 @@ const organizationJsonLd = {
   email: BRAND.email,
   logo: `${BRAND.siteUrl}/images/logo-dark.png`,
   image: `${BRAND.siteUrl}/images/portfolio/hero/home.jpg`,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: BRAND.city,
+    addressRegion: BRAND.region,
+    addressCountry: "IN",
+  },
+  areaServed: { "@type": "City", name: BRAND.city },
+  sameAs: Object.values(BRAND.social).filter(Boolean),
 };
 
 export default function RootLayout({

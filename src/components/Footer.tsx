@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Mail, Phone, MapPin, Clock, MessageCircle, ArrowUp } from 'lucide-react';
 import { STUDIO_SETTINGS } from '@/lib/content';
 import { BRAND } from '@/lib/brand';
+import SocialLinks from '@/components/SocialLinks';
 
 const navigation = [
   { name: 'About Us', path: '/about' },
@@ -34,6 +35,7 @@ export default function Footer() {
           <p className="text-sm text-ivory/80 leading-relaxed max-w-xs font-light">
             {settings.about_text}
           </p>
+          <SocialLinks />
         </div>
 
         <div className="space-y-6">

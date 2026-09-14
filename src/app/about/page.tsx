@@ -42,14 +42,14 @@ export default function AboutPage() {
       <section className="max-w-7xl mx-auto px-6 md:px-12 py-16 grid grid-cols-1 md:grid-cols-12 gap-16 items-center">
         <div className="md:col-span-7 space-y-8">
           <div className="space-y-4">
-            <span className="text-xs tracking-[0.3em] uppercase text-gold">About Us</span>
+            <span className="text-xs tracking-[0.3em] uppercase text-gold">About Us · Pune</span>
             <h1 className="text-5xl md:text-7xl font-light tracking-tight text-ivory leading-[1.02]">
               Architecture as an <span className="text-gold italic">Emotional</span> Conduit
             </h1>
           </div>
           <p className="text-base font-light text-ivory/80 leading-relaxed max-w-xl">
             We are passionate creators of extraordinary environments, dedicated to transforming spaces into timeless expressions of beauty, functionality, and personal style.
-            Founded in Geneva, Ethereal Spaces emerged from a single, guiding belief: that architecture is not merely physical structure, but an emotional conduit.
+            Based in Pune, Ethereal Spaces emerged from a single, guiding belief: that architecture is not merely physical structure, but an emotional conduit.
           </p>
           <p className="text-base font-light text-ivory/80 leading-relaxed max-w-xl">
             We listen, we understand, and we translate dreams into tangible realities that exceed expectations. Through meticulous attention to detail, innovative solutions, and an unwavering commitment to excellence, we create spaces that are not just beautiful, but truly meaningful.
