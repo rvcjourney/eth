@@ -11,7 +11,7 @@ const navigation = [
   { name: 'Projects', path: '/projects' },
   { name: 'Services', path: '/services' },
   { name: 'Gallery', path: '/gallery' },
-  { name: 'Book a Consultation', path: '/contact' }
+  { name: 'Book a Free Consultation', path: '/contact' }
 ];
 
 const expertise = ['Tailored Colour Palettes', '2D Drawings', '3D Renders', 'On-Site Execution', 'Completed Interiors'];
@@ -35,7 +35,8 @@ export default function Footer() {
           <p className="text-sm text-ivory/80 leading-relaxed max-w-xs font-light">
             {settings.about_text}
           </p>
-          <SocialLinks />
+          {/* Instagram has its own floating button, so it isn't repeated here. */}
+          <SocialLinks exclude={['instagram']} />
         </div>
 
         <div className="space-y-6">
@@ -62,21 +63,21 @@ export default function Footer() {
 
         <div className="space-y-6">
           <h4 className="text-xs uppercase tracking-[0.25em] text-gold font-sans font-medium">Get in Touch</h4>
-          <ul className="space-y-4 text-sm text-ivory/80 font-light">
+          <ul className="space-y-2 text-sm text-ivory/80 font-light">
             <li>
-              <a href={`tel:${phone.replace(/[^+\d]/g, '')}`} className="flex items-center gap-3 hover:text-gold transition-colors">
+              <a href={`tel:${phone.replace(/[^+\d]/g, '')}`} className="flex items-center gap-3 py-2 hover:text-gold transition-colors">
                 <Phone size={14} className="text-gold shrink-0" />
                 <span>{phone}</span>
               </a>
             </li>
             <li>
-              <a href={BRAND.whatsappHref} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:text-gold transition-colors">
+              <a href={BRAND.whatsappHref} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 py-2 hover:text-gold transition-colors">
                 <MessageCircle size={14} className="text-gold shrink-0" />
                 <span>Chat on WhatsApp</span>
               </a>
             </li>
             <li>
-              <a href={`mailto:${email}`} className="flex items-center gap-3 hover:text-gold transition-colors break-all">
+              <a href={`mailto:${email}`} className="flex items-center gap-3 py-2 hover:text-gold transition-colors break-all">
                 <Mail size={14} className="text-gold shrink-0" />
                 <span>{email}</span>
               </a>
@@ -106,7 +107,7 @@ export default function Footer() {
         <p>© {new Date().getFullYear()} {BRAND.legalName}. {BRAND.tagline}.</p>
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="flex items-center gap-1.5 hover:text-gold transition-colors duration-300 border border-gold/15 hover:border-gold/30 px-3 py-1.5 rounded-full"
+          className="flex items-center gap-1.5 hover:text-gold transition-colors duration-300 border border-gold/15 hover:border-gold/30 px-4 py-2.5 rounded-full"
           aria-label="Scroll to top"
         >
           <span>Top</span>

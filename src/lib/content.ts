@@ -109,7 +109,7 @@ export const HOMEPAGE_CONTENT: HomepageContent = {
     { step: 5, title: 'Execution & Handover', description: 'On-site supervision through ceilings, carpentry and finishes, until your space is complete and ready to live in.' }
   ],
   cta_title: "Let's Reimagine Your Space",
-  cta_button_text: 'Book a Consultation',
+  cta_button_text: 'Book a Free Consultation',
   portfolio_tag: 'Portfolio',
   portfolio_title: 'Featured Projects',
   portfolio_link_text: 'View All Projects',

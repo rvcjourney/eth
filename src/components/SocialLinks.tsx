@@ -59,9 +59,9 @@ export function SocialIcon({ network, size = 18 }: { network: Network; size?: nu
   );
 }
 
-/** Social profile icons; networks without a link in BRAND.social are not shown. */
-export default function SocialLinks({ className = '' }: { className?: string }) {
-  const networks = ORDER.filter((network) => BRAND.social[network]);
+/** Social profile icons; networks without a link in BRAND.social, or listed in `exclude`, are not shown. */
+export default function SocialLinks({ className = '', exclude = [] }: { className?: string; exclude?: Network[] }) {
+  const networks = ORDER.filter((network) => BRAND.social[network] && !exclude.includes(network));
   if (networks.length === 0) return null;
 
   return (

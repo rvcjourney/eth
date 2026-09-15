@@ -11,7 +11,7 @@ export default function MaterialBoard() {
             <div className="relative w-full flex-1 min-h-0 rounded-full overflow-hidden bg-dark-bg">
               <Image src={material.src} alt={material.label} fill sizes="(max-width: 1024px) 20vw, 12vw" className="object-cover" />
             </div>
-            <figcaption className="text-[11px] md:text-xs uppercase tracking-[0.12em] text-champagne text-center leading-tight">
+            <figcaption className="text-xs uppercase tracking-[0.06em] md:tracking-[0.12em] text-champagne text-center leading-tight">
               {material.label}
             </figcaption>
           </figure>
@@ -31,7 +31,7 @@ export default function MaterialBoard() {
                 />
               ))}
             </div>
-            <span className="text-[11px] md:text-xs uppercase tracking-[0.18em] text-champagne">{palette.name}</span>
+            <span className="text-xs uppercase tracking-[0.12em] md:tracking-[0.18em] text-champagne">{palette.name}</span>
           </div>
         ))}
       </div>

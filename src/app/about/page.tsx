@@ -124,7 +124,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {DELIVERABLES.map((item) => (
               <Link key={item.title} href={item.href} className="group relative aspect-[3/4] rounded-2xl overflow-hidden bg-dark-bg block">
-                <Image src={item.image} alt={item.title} fill sizes="(max-width: 1024px) 50vw, 25vw" className="object-cover transition-transform duration-[1.2s] group-hover:scale-105" />
+                <Image src={item.image} alt={item.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" className="object-cover transition-transform duration-[1.2s] group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-6 flex items-center justify-between text-white">
                   <h3 className="text-2xl font-light">{item.title}</h3>
@@ -140,7 +140,7 @@ export default function AboutPage() {
       <section className="py-28 px-6 text-center border-t border-gold/10 space-y-6">
         <h2 className="text-4xl md:text-5xl font-light text-ivory">Let&apos;s Reimagine Your Space</h2>
         <Link href="/contact" className="inline-block px-10 py-4 bg-ivory hover:bg-gold text-dark-bg text-xs uppercase tracking-[0.25em] rounded-full transition-colors duration-300">
-          Book a Consultation
+          Book a Free Consultation
         </Link>
       </section>
     </div>

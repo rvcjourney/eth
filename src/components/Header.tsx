@@ -43,7 +43,7 @@ export default function Header() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
-        <Link href="/" className="flex items-center group" aria-label="Ethereal Spaces home">
+        <Link href="/" className="flex items-center shrink-0 group" aria-label="Ethereal Spaces home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/images/logo-dark.png"
@@ -55,7 +55,7 @@ export default function Header() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-9">
+        <nav className="hidden lg:flex items-center gap-7 xl:gap-9">
           {navLinks.map((link) => (
             <Link
               key={link.path}
@@ -74,16 +74,16 @@ export default function Header() {
           ))}
           <Link
             href="/contact"
-            className="ml-2 px-5 py-2.5 bg-ivory hover:bg-gold text-dark-bg text-xs uppercase tracking-[0.2em] rounded-full transition-colors duration-300"
+            className="ml-2 px-5 py-2.5 whitespace-nowrap bg-ivory hover:bg-gold text-dark-bg text-xs uppercase tracking-[0.2em] rounded-full transition-colors duration-300"
           >
-            Book Consultation
+            Book a Free Consultation
           </Link>
         </nav>
 
         {/* Mobile Menu Toggle */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden text-ivory hover:text-gold transition-colors duration-300"
+          className="lg:hidden p-2.5 -mr-2.5 text-ivory hover:text-gold transition-colors duration-300"
           aria-label={isOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={isOpen}
         >
@@ -93,7 +93,7 @@ export default function Header() {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`fixed inset-0 top-[80px] bg-dark-bg z-40 md:hidden flex flex-col items-center justify-center gap-8 transition-all duration-500 ease-in-out border-t border-gold/10 ${
+        className={`fixed inset-0 top-[80px] bg-dark-bg z-40 lg:hidden flex flex-col items-center justify-center gap-8 transition-all duration-500 ease-in-out border-t border-gold/10 ${
           isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none translate-x-full'
         }`}
       >
@@ -112,7 +112,7 @@ export default function Header() {
           href="/contact"
           className="mt-4 px-8 py-4 bg-ivory text-dark-bg text-xs uppercase tracking-[0.2em] rounded-full"
         >
-          Book Consultation
+          Book a Free Consultation
         </Link>
       </div>
     </header>

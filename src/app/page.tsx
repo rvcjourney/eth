@@ -162,7 +162,7 @@ export default function HomePage() {
           </div>
           <Link
             href="/projects"
-            className="text-xs uppercase tracking-[0.2em] text-champagne hover:text-gold flex items-center gap-1.5 transition-colors mt-4 md:mt-0 group"
+            className="py-3 text-xs uppercase tracking-[0.2em] text-champagne hover:text-gold flex items-center gap-1.5 transition-colors mt-1 md:mt-0 group"
           >
             <span>{content.portfolio_link_text || 'View All Projects'}</span>
             <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
@@ -225,7 +225,7 @@ export default function HomePage() {
               <p className="text-xs text-gold uppercase tracking-[0.25em] font-medium">{content.distinction_badge_title}</p>
               <p className="text-sm text-ivory/80 font-light">{content.distinction_badge_desc}</p>
             </div>
-            <Link href="/services" className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-ivory hover:text-gold transition-colors group">
+            <Link href="/services" className="inline-flex items-center gap-2 py-3 text-xs uppercase tracking-[0.2em] text-ivory hover:text-gold transition-colors group">
               <span>Our Services</span>
               <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </Link>
@@ -340,7 +340,7 @@ export default function HomePage() {
               <h2 className="text-4xl md:text-6xl font-light tracking-tight text-ivory">{content.showcase_title}</h2>
             </div>
 
-            <div className="relative w-full max-w-6xl mx-auto aspect-[4/3] md:aspect-[21/9] rounded-2xl overflow-hidden bg-dark-surface">
+            <div className="relative w-full max-w-6xl mx-auto aspect-[4/5] sm:aspect-[4/3] md:aspect-[21/9] rounded-2xl overflow-hidden bg-dark-surface">
               <AnimatePresence initial={false} custom={slideDirection} mode="popLayout">
                 <motion.div
                   key={current.id}
@@ -384,8 +384,11 @@ export default function HomePage() {
                     key={p.id}
                     onClick={() => goToProject(idx)}
                     aria-label={`Show ${p.name}`}
-                    className={`h-1.5 rounded-full transition-all duration-300 ${activeProject % showcase.length === idx ? 'bg-gold w-6' : 'bg-gold/25 w-1.5'}`}
-                  />
+                    className="p-2 -m-1 flex items-center justify-center"
+                  >
+                    {/* Small visible dot inside a comfortable tap area */}
+                    <span className={`block h-1.5 rounded-full transition-all duration-300 ${activeProject % showcase.length === idx ? 'bg-gold w-6' : 'bg-gold/25 w-1.5'}`} />
+                  </button>
                 ))}
               </div>
               <button

@@ -82,7 +82,7 @@ export default function InteractiveGallery({ tag, title, description, limit }: I
               <button
                 key={category}
                 onClick={() => setActiveFilter(category)}
-                className={`relative px-4 py-2 text-xs md:text-xs uppercase tracking-widest transition-all duration-500 rounded-lg font-medium cursor-pointer ${
+                className={`relative px-4 py-2.5 min-h-10 text-xs md:text-xs uppercase tracking-widest transition-all duration-500 rounded-lg font-medium cursor-pointer ${
                   activeFilter === category 
                     ? 'text-dark-bg font-semibold' 
                     : 'text-ivory/75 hover:text-ivory'
@@ -127,7 +127,7 @@ export default function InteractiveGallery({ tag, title, description, limit }: I
                         src={item.image_url}
                         alt={item.caption || 'Curated Detail'}
                         fill
-                        sizes="(max-w-720px) 100vw, 25vw"
+                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 25vw"
                         className="object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-108"
                       />
                       
@@ -225,7 +225,7 @@ export default function InteractiveGallery({ tag, title, description, limit }: I
                   alt={filteredItems[lightboxIndex].caption || 'Curated Detail'}
                   fill
                   className="object-contain"
-                  sizes="(max-w-1024px) 100vw, 66vw"
+                  sizes="(max-width: 768px) 100vw, 66vw"
                   priority
                 />
               </div>

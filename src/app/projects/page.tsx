@@ -59,7 +59,7 @@ export default function ProjectsPage() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 text-xs uppercase tracking-wider transition-all duration-300 rounded-full border ${
+                className={`px-4 py-2.5 min-h-10 text-xs uppercase tracking-wider transition-all duration-300 rounded-full border ${
                   selectedCategory === cat
                     ? 'border-gold bg-gold text-dark-bg font-medium'
                     : 'border-gold/10 text-ivory/80 hover:border-gold/30 hover:text-gold'

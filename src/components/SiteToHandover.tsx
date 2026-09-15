@@ -31,7 +31,7 @@ export default function SiteToHandover() {
         </div>
         <Link
           href="/projects/linear-light-residence"
-          className="text-xs uppercase tracking-[0.2em] text-champagne hover:text-gold flex items-center gap-1.5 transition-colors group"
+          className="py-3 text-xs uppercase tracking-[0.2em] text-champagne hover:text-gold flex items-center gap-1.5 transition-colors group"
         >
           <span>View the Residence</span>
           <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />

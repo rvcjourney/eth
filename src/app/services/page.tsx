@@ -103,12 +103,12 @@ export default function ServicesPage() {
         {/* Spaces we design */}
         <section className="mt-32 grid grid-cols-1 md:grid-cols-2 gap-6">
           {spaces.map((space) => (
-            <div key={space.group} className="p-10 bg-dark-surface rounded-2xl border border-gold/10 space-y-6">
+            <div key={space.group} className="p-6 md:p-10 bg-dark-surface rounded-2xl border border-gold/10 space-y-6">
               <h3 className="text-3xl font-light">{space.group}</h3>
-              <ul className="grid grid-cols-2 gap-3 text-sm text-ivory/80">
+              <ul className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm text-ivory/80">
                 {space.items.map((item) => (
-                  <li key={item} className="flex items-center gap-2">
-                    <span className="w-1 h-1 rounded-full bg-gold" />
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="w-1 h-1 mt-2 shrink-0 rounded-full bg-gold" />
                     {item}
                   </li>
                 ))}
@@ -127,7 +127,7 @@ export default function ServicesPage() {
                 Ceilings, carpentry and joinery in progress on our active sites.
               </p>
             </div>
-            <Link href="/gallery" className="text-xs uppercase tracking-[0.2em] text-champagne hover:text-gold flex items-center gap-1.5 transition-colors">
+            <Link href="/gallery" className="py-3 text-xs uppercase tracking-[0.2em] text-champagne hover:text-gold flex items-center gap-1.5 transition-colors">
               <span>Full Gallery</span>
               <ArrowRight size={12} />
             </Link>
@@ -142,16 +142,16 @@ export default function ServicesPage() {
         </section>
 
         {/* CTA */}
-        <div className="mt-32 p-12 md:p-20 bg-ivory text-dark-bg text-center rounded-2xl space-y-6">
+        <div className="mt-32 p-8 md:p-20 bg-ivory text-dark-bg text-center rounded-2xl space-y-6">
           <h2 className="text-4xl md:text-5xl font-light tracking-tight">Planning a New Interior?</h2>
           <p className="text-base text-dark-bg/80 max-w-md mx-auto leading-relaxed font-light">
             Tell us about your space and we will guide you from the first palette to the final handover.
           </p>
           <div className="pt-4 flex flex-col sm:flex-row justify-center gap-4">
-            <Link href="/contact" className="px-8 py-4 bg-dark-bg hover:bg-dark-secondary text-ivory text-xs uppercase tracking-[0.2em] rounded-full transition-colors duration-300">
-              Book a Consultation
+            <Link href="/contact" className="px-6 sm:px-8 py-4 whitespace-nowrap bg-dark-bg hover:bg-dark-secondary text-ivory text-xs uppercase tracking-[0.12em] sm:tracking-[0.2em] rounded-full transition-colors duration-300">
+              Book a Free Consultation
             </Link>
-            <a href={BRAND.whatsappHref} target="_blank" rel="noopener noreferrer" className="px-8 py-4 border border-dark-bg/30 hover:border-dark-bg text-xs uppercase tracking-[0.2em] rounded-full transition-colors duration-300 flex items-center justify-center gap-2">
+            <a href={BRAND.whatsappHref} target="_blank" rel="noopener noreferrer" className="px-6 sm:px-8 py-4 whitespace-nowrap border border-dark-bg/30 hover:border-dark-bg text-xs uppercase tracking-[0.12em] sm:tracking-[0.2em] rounded-full transition-colors duration-300 flex items-center justify-center gap-2">
               <MessageCircle size={14} />
               WhatsApp Us
             </a>

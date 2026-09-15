@@ -61,7 +61,7 @@ export default function ProjectDetailsPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30" />
 
         <div className="absolute top-28 left-6 md:left-12 z-10">
-          <Link href="/projects" className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-white/85 hover:text-white transition-colors group">
+          <Link href="/projects" className="flex items-center gap-2 py-3 text-xs uppercase tracking-[0.2em] text-white/85 hover:text-white transition-colors group">
             <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
             <span>All Projects</span>
           </Link>
@@ -159,7 +159,7 @@ export default function ProjectDetailsPage() {
             <p className="text-sm text-dark-bg/80 font-light leading-relaxed">Share your plans and we will help shape a design that is truly yours.</p>
             <div className="flex flex-col gap-3">
               <Link href="/contact" className="px-6 py-3 bg-dark-bg text-ivory text-xs uppercase tracking-[0.2em] rounded-full text-center hover:bg-dark-secondary transition-colors">
-                Book a Consultation
+                Book a Free Consultation
               </Link>
               <a href={BRAND.whatsappHref} target="_blank" rel="noopener noreferrer" className="px-6 py-3 border border-dark-bg/30 hover:border-dark-bg text-xs uppercase tracking-[0.2em] rounded-full flex items-center justify-center gap-2 transition-colors">
                 <MessageCircle size={14} />

@@ -86,7 +86,7 @@ export default function GalleryPage() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 text-xs uppercase tracking-wider transition-all duration-300 rounded-full border ${
+              className={`px-4 py-2.5 min-h-10 text-xs uppercase tracking-wider transition-all duration-300 rounded-full border ${
                 selectedCategory === cat
                   ? 'border-gold bg-gold text-dark-bg font-medium'
                   : 'border-gold/10 text-ivory/80 hover:border-gold/30 hover:text-gold'
@@ -114,7 +114,7 @@ export default function GalleryPage() {
                   src={item.image_url}
                   alt={item.caption || 'Gallery Image'}
                   fill
-                  sizes="(max-w-768px) 100vw, (max-w-1200px) 50vw, 33vw"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
 
