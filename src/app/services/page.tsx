@@ -10,7 +10,11 @@ type Service = {
   title: string;
   description: string;
   details: string[];
-} & ({ visual: 'materials' } | { image: string; imageAlt: string });
+  // `contain`: keep the image's own proportions (drawing sheets lose their notes columns if cropped).
+} & (
+  | { visual: 'materials' }
+  | { image: string; imageAlt: string; contain?: boolean; imageWidth?: number; imageHeight?: number }
+);
 
 const services: Service[] = [
   {
@@ -24,8 +28,11 @@ const services: Service[] = [
   {
     eyebrow: '02 — Technical Planning',
     title: '2D Drawings',
-    image: '/images/portfolio/drawings/bedroom-elevation.jpg',
+    image: '/images/portfolio/drawings/bedroom-elevation.webp',
     imageAlt: 'Bedroom elevation and plan drawing with material and lighting schedules',
+    contain: true,
+    imageWidth: 2346,
+    imageHeight: 1453,
     description: 'Exceptional interiors are not created by chance; they are meticulously planned. Our detailed 2D drawings embody precision, technical expertise, and thoughtful planning, ensuring every space is executed with uncompromising accuracy and timeless elegance.',
     details: ['Floor plans and furniture layouts', 'Wall elevations with dimensions', 'Door, joinery and washroom details', 'Material, finish and lighting schedules']
   },
@@ -72,17 +79,27 @@ export default function ServicesPage() {
         <div className="space-y-28">
           {services.map((srv, idx) => (
             <article key={srv.title} className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-              <div
-                className={`lg:col-span-7 relative rounded-2xl overflow-hidden bg-dark-surface ${
-                  'visual' in srv ? 'aspect-[4/5] sm:aspect-[3/2]' : 'aspect-[3/2]'
-                } ${idx % 2 === 1 ? 'lg:order-2' : ''}`}
-              >
-                {'visual' in srv ? (
+              {/* quality 90 throughout: the drawing sheets are line art, which standard compression softens. */}
+              {'visual' in srv ? (
+                <div className={`lg:col-span-7 relative rounded-2xl overflow-hidden bg-dark-surface aspect-[4/5] sm:aspect-[3/2] ${idx % 2 === 1 ? 'lg:order-2' : ''}`}>
                   <MaterialBoard />
-                ) : (
-                  <Image src={srv.image} alt={srv.imageAlt} fill sizes="(max-width: 1024px) 100vw, 58vw" className="object-cover" />
-                )}
-              </div>
+                </div>
+              ) : srv.contain ? (
+                // The drawing keeps its own proportions: nothing is cropped and there are no empty bars.
+                <Image
+                  src={srv.image}
+                  alt={srv.imageAlt}
+                  width={srv.imageWidth ?? 2400}
+                  height={srv.imageHeight ?? 1600}
+                  sizes="(max-width: 1024px) 100vw, 58vw"
+                  quality={90}
+                  className={`lg:col-span-7 w-full h-auto rounded-2xl bg-white ${idx % 2 === 1 ? 'lg:order-2' : ''}`}
+                />
+              ) : (
+                <div className={`lg:col-span-7 relative rounded-2xl overflow-hidden bg-dark-surface aspect-[3/2] ${idx % 2 === 1 ? 'lg:order-2' : ''}`}>
+                  <Image src={srv.image} alt={srv.imageAlt} fill sizes="(max-width: 1024px) 100vw, 58vw" quality={90} className="object-cover" />
+                </div>
+              )}
               <div className="lg:col-span-5 space-y-6">
                 <span className="text-xs uppercase tracking-[0.3em] text-gold">{srv.eyebrow}</span>
                 <h2 className="text-4xl md:text-5xl font-light tracking-tight">{srv.title}</h2>

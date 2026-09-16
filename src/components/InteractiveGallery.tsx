@@ -110,7 +110,9 @@ export default function InteractiveGallery({ tag, title, description, limit }: I
               {filteredItems.map((item, index) => {
                 // Architectural height offset pattern
                 const heightClass = index % 4 === 1 ? 'md:translate-y-6' : index % 4 === 3 ? 'md:-translate-y-6' : '';
-                
+                // Drawing sheets are wide: give them a wider tile so they stay readable instead of being letterboxed.
+                const isDrawing = item.category === '2D Drawings';
+
                 return (
                   <motion.div
                     layout
@@ -119,15 +121,22 @@ export default function InteractiveGallery({ tag, title, description, limit }: I
                     exit={{ opacity: 0, scale: 0.95, y: 10 }}
                     transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                     key={item.id}
-                    className={`group relative overflow-hidden bg-white border border-gold/10 rounded-2xl transition-all duration-500 hover:shadow-xl hover:border-gold/20 cursor-pointer ${heightClass}`}
+                    className={`group relative overflow-hidden bg-white border border-gold/10 rounded-2xl transition-all duration-500 hover:shadow-xl hover:border-gold/20 cursor-pointer ${heightClass} ${
+                      isDrawing ? 'sm:col-span-2' : ''
+                    }`}
                     onClick={() => setLightboxIndex(index)}
                   >
-                    <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl">
+                    <div
+                      className="relative w-full overflow-hidden rounded-2xl"
+                      // Drawings keep their own proportions; photos stay on the tall 3:4 tile.
+                      style={{ aspectRatio: isDrawing ? `${item.width} / ${item.height}` : '3 / 4' }}
+                    >
                       <Image
                         src={item.image_url}
                         alt={item.caption || 'Curated Detail'}
                         fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 25vw"
+                        sizes={isDrawing ? '(max-width: 640px) 100vw, 50vw' : '(max-width: 640px) 100vw, (max-width: 768px) 50vw, 25vw'}
+                        quality={90}
                         className="object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-108"
                       />
                       
@@ -226,6 +235,7 @@ export default function InteractiveGallery({ tag, title, description, limit }: I
                   fill
                   className="object-contain"
                   sizes="(max-width: 768px) 100vw, 66vw"
+                  quality={90}
                   priority
                 />
               </div>

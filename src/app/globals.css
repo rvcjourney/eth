@@ -44,6 +44,14 @@ body {
     font-family: var(--font-cormorant), Georgia, serif;
     letter-spacing: -0.01em;
   }
+
+  /* Body paragraphs are justified site-wide; hyphenation keeps word spacing even on narrow screens.
+     Single-line text is unaffected, and `text-center`/`text-left` utilities still override this. */
+  p {
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+  }
 }
 
 ::selection {

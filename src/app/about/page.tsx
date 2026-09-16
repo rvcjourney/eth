@@ -14,7 +14,7 @@ const VALUES = [
 ];
 
 const DELIVERABLES = [
-  { title: '2D Drawings', image: '/images/portfolio/drawings/floor-plan.jpg', href: '/services' },
+  { title: '2D Drawings', image: '/images/portfolio/drawings/floor-plan.webp', href: '/services' },
   { title: '3D Renders', image: '/images/portfolio/refined-comfort/01.jpg', href: '/projects' },
   { title: 'Site Work', image: '/images/portfolio/site-work/09.jpg', href: '/services' },
   { title: 'Completed Projects', image: '/images/portfolio/marble-and-walnut-home/01.jpg', href: '/projects' }
@@ -30,14 +30,14 @@ export default function AboutPage() {
           <div className="space-y-4">
             <span className="text-xs tracking-[0.3em] uppercase text-gold">About Us</span>
             <h1 className="text-5xl md:text-7xl font-light tracking-tight text-ivory leading-[1.02]">
-              Architecture as an <span className="text-gold italic">Emotional</span> Conduit
+              Interior Design as an <span className="text-gold italic">Emotional</span> Conduit
             </h1>
           </div>
-          <p className="text-base font-light text-ivory/80 leading-relaxed max-w-xl">
+          <p className="text-base font-light text-ivory/80 leading-relaxed max-w-xl text-justify hyphens-auto">
             We are passionate creators of extraordinary environments, dedicated to transforming spaces into timeless expressions of beauty, functionality, and personal style.
-            Ethereal Spaces emerged from a single, guiding belief: that architecture is not merely physical structure, but an emotional conduit.
+            Ethereal Spaces emerged from a single, guiding belief: that an interior is not merely a physical space, but an emotional conduit.
           </p>
-          <p className="text-base font-light text-ivory/80 leading-relaxed max-w-xl">
+          <p className="text-base font-light text-ivory/80 leading-relaxed max-w-xl text-justify hyphens-auto">
             We listen, we understand, and we translate dreams into tangible realities that exceed expectations. Through meticulous attention to detail, innovative solutions, and an unwavering commitment to excellence, we create spaces that are not just beautiful, but truly meaningful.
           </p>
         </div>
@@ -73,7 +73,7 @@ export default function AboutPage() {
             <span className="text-xs tracking-[0.3em] uppercase text-gold block">Tailored Colour Palettes</span>
             <h2 className="text-4xl md:text-5xl font-light tracking-tight text-ivory leading-tight">A Palette That Reflects You</h2>
           </div>
-          <p className="text-base font-light text-ivory/80 leading-relaxed">
+          <p className="text-base font-light text-ivory/80 leading-relaxed text-justify hyphens-auto">
             We carefully select the perfect colour palette for each client, ensuring harmony with their lifestyle, personality, and space. Every detail is customised to create a unique atmosphere that reflects individuality.
           </p>
           <div className="space-y-5">
@@ -124,7 +124,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {DELIVERABLES.map((item) => (
               <Link key={item.title} href={item.href} className="group relative aspect-[3/4] rounded-2xl overflow-hidden bg-dark-bg block">
-                <Image src={item.image} alt={item.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" className="object-cover transition-transform duration-[1.2s] group-hover:scale-105" />
+                <Image src={item.image} alt={item.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" quality={90} className="object-cover transition-transform duration-[1.2s] group-hover:scale-105" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-6 flex items-center justify-between text-white">
                   <h3 className="text-2xl font-light">{item.title}</h3>
