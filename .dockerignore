@@ -1,6 +1,7 @@
 # Keep the Docker build context small and free of secrets
 node_modules
 .next
+.next-dev
 .git
 .github
 .leads

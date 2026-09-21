@@ -33,11 +33,14 @@ export default function Header() {
   const isActive = (path: string) => pathname === path || pathname?.startsWith(`${path}/`);
   // Project pages open on a full-bleed photo, where a transparent header would be unreadable.
   const overPhotoHero = /^\/projects\/[^/]+$/.test(pathname ?? '');
+  // With the glass panel behind it the logo sits on near-solid ivory; without it the logo can
+  // fall on a hero photo, so it gets an ivory halo that is invisible on the light pages.
+  const onGlass = scrolled || isOpen || overPhotoHero;
 
   return (
     <header
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
-        scrolled || isOpen || overPhotoHero
+        onGlass
           ? 'py-3 glass-panel-heavy shadow-sm border-b border-gold/10'
           : 'py-5 bg-transparent border-b border-transparent'
       }`}
@@ -50,7 +53,9 @@ export default function Header() {
             alt="Ethereal Spaces"
             width={1024}
             height={506}
-            className="h-14 md:h-16 w-auto object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+            className={`h-14 md:h-16 w-auto object-contain transition-transform duration-500 group-hover:scale-[1.03] ${
+              onGlass ? '' : 'drop-shadow-[0_1px_12px_rgba(245,242,237,0.95)]'
+            }`}
           />
         </Link>
 

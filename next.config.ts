@@ -5,6 +5,11 @@ const nextConfig: NextConfig = {
   output: "standalone",
   devIndicators: false,
 
+  // `next dev` runs Turbopack while `next build` runs webpack, and the two write incompatible
+  // output. Sharing one directory means a production build silently breaks a running dev server
+  // (fonts fail to resolve), so dev gets a directory of its own.
+  distDir: process.env.NODE_ENV === "development" ? ".next-dev" : ".next",
+
   // Ensure we can build without issues
   typescript: {
     ignoreBuildErrors: true,
