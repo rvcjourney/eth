@@ -30,7 +30,7 @@ export default function Footer() {
         <div className="space-y-6">
           <Link href="/" className="block w-fit" aria-label="Ethereal Spaces home">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/logo-dark.png" alt="Ethereal Spaces" width={1024} height={506} className="h-20 w-auto object-contain bg-white rounded-xl px-3 py-2" />
+            <img src="/images/logo-dark.png" alt="Ethereal Spaces" width={1024} height={506} className="h-20 w-auto object-contain" />
           </Link>
           <p className="text-sm text-ivory/80 leading-relaxed max-w-xs font-light">
             {settings.about_text}

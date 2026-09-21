@@ -45,18 +45,14 @@ export default function Header() {
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
         <Link href="/" className="flex items-center shrink-0 group" aria-label="Ethereal Spaces home">
-          {/* White plate: the silver half of the mark is close to the ivory page in value, so the
-              logo sits on its own white ground instead of dissolving into the background. */}
-          <span className="inline-flex bg-white rounded-xl px-3 py-2 transition-transform duration-500 group-hover:scale-[1.03]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/logo-dark.png"
-              alt="Ethereal Spaces"
-              width={1024}
-              height={506}
-              className="h-14 md:h-16 w-auto object-contain"
-            />
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/logo-dark.png"
+            alt="Ethereal Spaces"
+            width={1024}
+            height={506}
+            className="h-14 md:h-16 w-auto object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+          />
         </Link>
 
         {/* Desktop Navigation */}
