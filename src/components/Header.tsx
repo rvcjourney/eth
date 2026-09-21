@@ -39,8 +39,8 @@ export default function Header() {
     <header
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
         onGlass
-          ? 'py-3 glass-panel-heavy shadow-sm border-b border-gold/10'
-          : 'py-5 bg-transparent border-b border-transparent'
+          ? 'py-3 bg-white shadow-sm border-b border-gold/10'
+          : 'py-5 bg-white border-b border-gold/5'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
@@ -94,7 +94,7 @@ export default function Header() {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`fixed inset-0 top-[80px] bg-dark-bg z-40 lg:hidden flex flex-col items-center justify-center gap-8 transition-all duration-500 ease-in-out border-t border-gold/10 ${
+        className={`fixed inset-0 top-[80px] bg-white z-40 lg:hidden flex flex-col items-center justify-center gap-8 transition-all duration-500 ease-in-out border-t border-gold/10 ${
           isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none translate-x-full'
         }`}
       >

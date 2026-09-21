@@ -23,7 +23,7 @@ export default function Footer() {
   const hasHours = Boolean(settings.hours_weekday || settings.hours_weekend);
 
   return (
-    <footer className="bg-dark-surface border-t border-gold/10 pt-20 pb-10 relative overflow-hidden">
+    <footer className="bg-white border-t border-gold/10 pt-20 pb-10 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
 
         {/* Brand Column */}
