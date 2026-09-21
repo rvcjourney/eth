@@ -6,11 +6,15 @@ import { STUDIO_SETTINGS } from '@/lib/content';
 import { BRAND } from '@/lib/brand';
 import SocialLinks from '@/components/SocialLinks';
 
+export const PORTFOLIO_PDF = '/ethereal-spaces-portfolio.pdf';
+
 const navigation = [
   { name: 'About Us', path: '/about' },
   { name: 'Projects', path: '/projects' },
   { name: 'Services', path: '/services' },
   { name: 'Gallery', path: '/gallery' },
+  // The portfolio is a PDF in /public, so it opens in a new tab rather than routing.
+  { name: 'Portfolio', path: PORTFOLIO_PDF, external: true },
   { name: 'Book a Free Consultation', path: '/contact' }
 ];
 
@@ -44,9 +48,20 @@ export default function Footer() {
           <ul className="space-y-3">
             {navigation.map((link) => (
               <li key={link.path}>
-                <Link href={link.path} className="text-sm text-ivory/80 hover:text-gold transition-colors duration-300 font-light">
-                  {link.name}
-                </Link>
+                {link.external ? (
+                  <a
+                    href={link.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-ivory/80 hover:text-gold transition-colors duration-300 font-light"
+                  >
+                    {link.name}
+                  </a>
+                ) : (
+                  <Link href={link.path} className="text-sm text-ivory/80 hover:text-gold transition-colors duration-300 font-light">
+                    {link.name}
+                  </Link>
+                )}
               </li>
             ))}
           </ul>
