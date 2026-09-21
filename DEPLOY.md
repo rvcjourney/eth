@@ -32,10 +32,14 @@ Set at least:
 
 ```env
 HOST_PORT=3005
-NEXT_PUBLIC_SITE_URL=http://YOUR-SERVER-IP:3005
+NEXT_PUBLIC_SITE_URL=https://etherealspaces.design
+NEXT_PUBLIC_GA_ID=G-M09TQ5TDHD
 ```
 
 Add `SMTP_PASS` (a Gmail App Password) if you want enquiries emailed. Without it the form offers WhatsApp instead.
+
+Both `NEXT_PUBLIC_` values are read when the image is built, not when it starts, so changing either needs
+`docker compose up -d --build` rather than a restart.
 Save with `Ctrl+O`, `Enter`, then exit with `Ctrl+X`.
 
 ## 3. Build and start

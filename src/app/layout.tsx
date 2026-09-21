@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AutoContactPopup from "@/components/AutoContactPopup";
 import FloatingContact from "@/components/FloatingContact";
+import Analytics from "@/components/Analytics";
 import { BRAND } from "@/lib/brand";
 
 // Only 400+ weights are loaded, so `font-light` headings render at a readable 400.
@@ -86,6 +87,7 @@ export default function RootLayout({
         <Footer />
         <FloatingContact />
         <AutoContactPopup />
+        <Analytics />
       </body>
     </html>
   );

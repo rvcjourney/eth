@@ -9,6 +9,7 @@ services:
       context: .
       args:
         NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-}
+        NEXT_PUBLIC_GA_ID: ${NEXT_PUBLIC_GA_ID:-}
     image: ethereal-spaces-web
     container_name: ethereal-spaces-web
     restart: unless-stopped

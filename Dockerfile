@@ -15,7 +15,10 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # Public site address baked into SEO links and the sitemap (http://SERVER-IP:PORT now, your domain later).
 ARG NEXT_PUBLIC_SITE_URL
+# Google Analytics 4 measurement ID. Left empty, the site ships with no tracking script.
+ARG NEXT_PUBLIC_GA_ID
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL \
+    NEXT_PUBLIC_GA_ID=$NEXT_PUBLIC_GA_ID \
     NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
