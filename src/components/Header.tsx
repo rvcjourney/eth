@@ -51,7 +51,9 @@ export default function Header() {
             alt="Ethereal Spaces"
             width={1024}
             height={506}
-            className="h-14 md:h-16 w-auto object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+            // The silver half of the mark is nearly the value of the ivory background, so a hard
+            // 1px offset gives it a raised edge to read against instead of dissolving into it.
+            className="h-14 md:h-16 w-auto object-contain transition-transform duration-500 group-hover:scale-[1.03] drop-shadow-[1px_1px_0_rgba(31,26,23,0.5)]"
           />
         </Link>
 
