@@ -13,6 +13,7 @@ const navigation = [
   { name: 'Projects', path: '/projects' },
   { name: 'Services', path: '/services' },
   { name: 'Gallery', path: '/gallery' },
+  { name: 'Blog', path: '/blog' },
   // The portfolio is a PDF in /public, so it opens in a new tab rather than routing.
   { name: 'Portfolio', path: PORTFOLIO_PDF, external: true },
   { name: 'Book a Free Consultation', path: '/contact' }
