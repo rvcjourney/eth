@@ -357,6 +357,77 @@ export const BLOG_POSTS: BlogPost[] = [
       },
     ],
   },
+  {
+    slug: 'modular-kitchen-design-in-pune',
+    title: 'Modular Kitchen Design: What to Settle Before You Order',
+    description:
+      'Layout, carcass material, shutter finish and hardware decide whether a modular kitchen lasts. What to fix before anything is manufactured.',
+    keyword: 'modular kitchen designers in Pune',
+    date: '2026-09-26',
+    readingMinutes: 7,
+    image: '/images/portfolio/linear-light-residence/04.jpg',
+    imageAlt: 'Completed modular kitchen with high-gloss shutters by Ethereal Spaces',
+    intro:
+      'A modular kitchen is manufactured off site and assembled in a few days, which means almost every decision is locked before anything arrives. Once the units are cut, changing the layout is not an adjustment; it is a new order. These are the decisions worth slowing down for.',
+    sections: [
+      {
+        heading: 'Layout comes from the plumbing and the door',
+        paragraphs: [
+          'The sink wants to stay near the existing drain line, the hob wants a wall it can vent through, and the fridge wants to be reachable without crossing the cooking zone. Those three constraints usually decide the layout before anyone picks a colour.',
+          'In most Pune flats the kitchen is a parallel or L-shaped room, and the useful question is not which layout looks best but which one keeps the sink, hob and fridge within a few steps of each other without anyone walking through the cooking area to reach the fridge.',
+        ],
+      },
+      {
+        heading: 'Carcass material matters more than the shutter',
+        paragraphs: [
+          'The carcass is the box behind the door. It is the part that carries weight, sits closest to the sink, and determines whether the kitchen survives a decade. It is also the part clients never see, which is why it is where corners get cut.',
+          'Plywood, marine plywood, HDHMR and particle board all cost differently and behave very differently around moisture. Ask which one a quote is based on, and ask specifically what is used in the units under the sink.',
+        ],
+      },
+      {
+        heading: 'Shutter finishes, and what each one asks of you',
+        list: [
+          'High gloss: bright and reflective, shows fingerprints, needs wiping often',
+          'Matt laminate: forgiving day to day, the most practical in a busy kitchen',
+          'Acrylic: deep colour and a hard surface, more expensive',
+          'Membrane: seamless and moulded, cannot be repaired locally if damaged',
+          'Veneer: warm and natural, needs sealing and careful cleaning',
+        ],
+      },
+      {
+        heading: 'Hardware is what you touch every day',
+        paragraphs: [
+          'Hinges, drawer channels and lift-up mechanisms are the parts that fail first, and they are the easiest line to quietly downgrade in a quote. A soft-close drawer that stops closing softly after a year was fitted with the cheaper channel.',
+          'Ask for the brand and the specific series, not just "soft close". Ask what the warranty covers and who honours it. These parts are replaceable later, but only if the sizes are standard.',
+        ],
+      },
+      {
+        heading: 'Storage should follow how you actually cook',
+        paragraphs: [
+          'Standard kitchens are designed around cabinet sizes rather than around the people using them. Indian cooking needs deep drawers for vessels, a dedicated place for tall containers, and space near the hob for daily masalas.',
+          'Walk your current kitchen before the design is finalised and note what is inconvenient today. Those irritations are the brief. A tall unit in the wrong place is worse than no tall unit.',
+        ],
+      },
+      {
+        heading: 'The details people notice too late',
+        list: [
+          'Socket positions, decided before tiling rather than after',
+          'Chimney ducting route, and whether it can actually reach outside',
+          'Counter height matched to the person who cooks most',
+          'Backsplash height behind the hob, which takes the most cleaning',
+          'Skirting and the gap under the units, where water collects',
+          'Whether the fridge door opens fully without hitting a wall or unit',
+        ],
+      },
+      {
+        heading: 'Get it drawn before it is ordered',
+        paragraphs: [
+          'A modular kitchen should be documented like any other joinery: elevations with dimensions for every run, an electrical layout showing every socket and appliance point, and a schedule naming the carcass, the shutter finish and the hardware.',
+          'That drawing set is what protects you. When something arrives in the wrong finish or a socket lands behind a unit, the drawing settles the question.',
+        ],
+      },
+    ],
+  },
 ];
 
 export const getPost = (slug: string) => BLOG_POSTS.find((p) => p.slug === slug);
