@@ -33,11 +33,11 @@ export default function AboutPage() {
               Interior Design as an <span className="text-gold italic">Emotional</span> Conduit
             </h1>
           </div>
-          <p className="text-base font-light text-ivory/80 leading-relaxed max-w-xl text-justify hyphens-auto">
+          <p className="text-base font-light text-ivory/80 leading-relaxed max-w-xl text-justify">
             We are passionate creators of extraordinary environments, dedicated to transforming spaces into timeless expressions of beauty, functionality, and personal style.
             Ethereal Spaces emerged from a single, guiding belief: that an interior is not merely a physical space, but an emotional conduit.
           </p>
-          <p className="text-base font-light text-ivory/80 leading-relaxed max-w-xl text-justify hyphens-auto">
+          <p className="text-base font-light text-ivory/80 leading-relaxed max-w-xl text-justify">
             We listen, we understand, and we translate dreams into tangible realities that exceed expectations. Through meticulous attention to detail, innovative solutions, and an unwavering commitment to excellence, we create spaces that are not just beautiful, but truly meaningful.
           </p>
         </div>
@@ -73,7 +73,7 @@ export default function AboutPage() {
             <span className="text-xs tracking-[0.3em] uppercase text-gold block">Tailored Colour Palettes</span>
             <h2 className="text-4xl md:text-5xl font-light tracking-tight text-ivory leading-tight">A Palette That Reflects You</h2>
           </div>
-          <p className="text-base font-light text-ivory/80 leading-relaxed text-justify hyphens-auto">
+          <p className="text-base font-light text-ivory/80 leading-relaxed text-justify">
             We carefully select the perfect colour palette for each client, ensuring harmony with their lifestyle, personality, and space. Every detail is customised to create a unique atmosphere that reflects individuality.
           </p>
           <div className="space-y-5">

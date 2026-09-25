@@ -45,12 +45,13 @@ body {
     letter-spacing: -0.01em;
   }
 
-  /* Body paragraphs are justified site-wide; hyphenation keeps word spacing even on narrow screens.
+  /* Body paragraphs are justified site-wide. Hyphenation is off: it evens out word spacing, but it
+     splits words across lines ("ad-dress"), which reads as a mistake rather than as typesetting.
      Single-line text is unaffected, and `text-center`/`text-left` utilities still override this. */
   p {
     text-align: justify;
     text-justify: inter-word;
-    hyphens: auto;
+    hyphens: none;
   }
 }
 
