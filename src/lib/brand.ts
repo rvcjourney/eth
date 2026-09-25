@@ -34,6 +34,14 @@ export const BRAND = {
   whatsappHref: whatsappLink(GREETING),
   city: 'Pune',
   region: 'Maharashtra',
+  // Localities we take work in across Pune. Used by the contact page and by the
+  // areaServed field in the site's structured data. This is where we will travel,
+  // not a claim about where projects have been completed.
+  serviceAreas: [
+    'Baner', 'Balewadi', 'Aundh', 'Wakad', 'Hinjewadi', 'Kothrud',
+    'Kharadi', 'Wagholi', 'Viman Nagar', 'Koregaon Park',
+    'Magarpatta', 'Hadapsar', 'NIBM', 'Pimpri-Chinchwad',
+  ],
   email: 'spaces.ethereal@gmail.com',
   // Social profiles shown in the footer. Leave a link empty to hide that icon.
   social: {

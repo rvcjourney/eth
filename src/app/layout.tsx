@@ -64,7 +64,10 @@ const organizationJsonLd = {
     addressRegion: BRAND.region,
     addressCountry: "IN",
   },
-  areaServed: { "@type": "City", name: BRAND.city },
+  areaServed: [
+    { "@type": "City", name: BRAND.city },
+    ...BRAND.serviceAreas.map((area) => ({ "@type": "Place", name: `${area}, ${BRAND.city}` })),
+  ],
   sameAs: Object.values(BRAND.social).filter(Boolean),
 };
 

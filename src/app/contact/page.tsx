@@ -259,6 +259,28 @@ export default function ContactPage() {
           </div>
         </div>
 
+        {/* Where we work. One honest list beats a landing page per locality. */}
+        <section className="mt-24 pt-12 border-t border-gold/10 space-y-6">
+          <div className="space-y-3 max-w-xl">
+            <span className="text-xs tracking-[0.3em] uppercase text-gold block">Areas We Serve</span>
+            <h2 className="text-3xl md:text-4xl font-light tracking-tight">Across Pune</h2>
+            <p className="text-base text-ivory/80 leading-relaxed font-light">
+              We design and execute interiors throughout Pune and Pimpri-Chinchwad. If your address
+              is not listed, ask anyway.
+            </p>
+          </div>
+          <ul className="flex flex-wrap gap-2.5">
+            {BRAND.serviceAreas.map((area) => (
+              <li
+                key={area}
+                className="px-4 py-2 text-sm font-light text-ivory/80 bg-dark-surface border border-gold/10 rounded-full"
+              >
+                {area}
+              </li>
+            ))}
+          </ul>
+        </section>
+
       </div>
     </div>
   );
