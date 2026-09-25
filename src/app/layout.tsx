@@ -78,6 +78,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${cormorant.variable} ${jost.variable}`}>
+      <head>
+        {/* Analytics must sit in <head>: Search Console's ownership check looks nowhere else. */}
+        <Analytics />
+      </head>
       <body className="antialiased bg-dark-bg text-ivory min-h-screen flex flex-col font-sans">
         <script
           type="application/ld+json"
@@ -90,7 +94,6 @@ export default function RootLayout({
         <Footer />
         <FloatingContact />
         <AutoContactPopup />
-        <Analytics />
       </body>
     </html>
   );
